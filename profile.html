@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>EarnBD - প্রোফাইল</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tbar-logo">Earn<span>BD</span></div>
+    <div class="tbar-right">
+      <div class="tbar-bal">৳<span id="hBal">0</span></div>
+      <div class="tbar-avatar" id="avt">U</div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="ph">
+      <div class="ph-title">আমার প্রোফাইল</div>
+      <div class="ph-sub">একাউন্ট ম্যানেজ এবং সেটিংস</div>
+    </div>
+
+    <!-- User Info Card -->
+    <div class="card" id="profileCard" style="padding:22px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div class="user-avatar" id="pAvt">U</div>
+        <div>
+          <div id="pName" style="font-family:'Baloo Da 2',cursive;font-size:20px;font-weight:700;color:var(--text);">লোড হচ্ছে...</div>
+          <div id="pPhone" style="font-size:13px;color:var(--t3);">...</div>
+        </div>
+        <div onclick="changeName()" style="margin-left:auto; cursor:pointer; color:var(--t4); font-size:18px;">✏️</div>
+      </div>
+      <div style="background:var(--b50);border:1px solid var(--b100);border-radius:12px;padding:12px 14px;">
+        <div style="font-size:12px;color:var(--t3);margin-bottom:4px;">আপনার রেফার কোড</div>
+        <div id="pCode" style="font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:800;color:var(--b700);letter-spacing:3px;">লোড হচ্ছে...</div>
+      </div>
+    </div>
+
+    <!-- Menu Section -->
+    <div style="margin-top:20px;">
+      
+      <a href="deposit.html" class="menu-item">
+        <div class="menu-icon" style="background:var(--b50); color:var(--b700);">💰</div>
+        <div class="menu-text">
+          <div class="menu-title">ডিপোজিট (বিকাশ/নগদ)</div>
+          <div class="menu-sub">ব্যালেন্স এড করুন</div>
+        </div>
+        <div class="menu-arrow">❯</div>
+      </a>
+
+      <a href="withdraw.html" class="menu-item">
+        <div class="menu-icon" style="background:var(--g3); color:var(--green);">💸</div>
+        <div class="menu-text">
+          <div class="menu-title">উত্তোলন করুন</div>
+          <div class="menu-sub">টাকা বিকাশ বা নগদে নিন</div>
+        </div>
+        <div class="menu-arrow">❯</div>
+      </a>
+
+      <div style="margin:20px 0 10px; font-weight:800; font-size:12px; color:var(--t3); padding-left:5px; text-transform:uppercase; letter-spacing:1px;">সাপোর্ট ও সোশ্যাল</div>
+      
+      <a href="https://wa.me/8801973885957" target="_blank" class="menu-item">
+        <div class="menu-icon" style="background:#e7f9ee; color:#25D366;">
+          <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.894-5.335 11.897-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">WhatsApp Support</div>
+          <div class="menu-sub">সরাসরি কথা বলুন</div>
+        </div>
+        <div class="menu-arrow">❯</div>
+      </a>
+
+      <a href="https://t.me/earnbd_official" target="_blank" class="menu-item">
+        <div class="menu-icon" style="background:#eaf6fc; color:#0088cc;">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.891 7.021l-2.103 9.917c-.159.703-.574.876-1.164.544l-3.204-2.361-1.545 1.488c-.171.171-.315.315-.645.315l.23-3.268 5.947-5.374c.259-.226-.057-.352-.403-.122l-7.35 4.631-3.167-1.026c-.687-.215-.7-.687.143-.99l12.383-4.773c.573-.215 1.074.122.873.99z"/></svg>
+        </div>
+        <div class="menu-text">
+          <div class="menu-title">Telegram Channel</div>
+          <div class="menu-sub">আপডেট পেতে জয়েন করুন</div>
+        </div>
+        <div class="menu-arrow">❯</div>
+      </a>
+
+      <!-- Logout -->
+      <div class="menu-item" onclick="doLogout()" style="margin-top:20px; border-color:#fee2e2; background:#fff;">
+        <div class="menu-icon" style="background:#fef2f2; color:var(--red);">🚪</div>
+        <div class="menu-text">
+          <div class="menu-title" style="color:var(--red);">লগআউট করুন</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <a href="dashboard.html" class="bnav-item">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      হোম
+    </a>
+    <a href="plans.html" class="bnav-item">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      প্ল্যান
+    </a>
+    <a href="refer.html" class="bnav-item">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      রেফার
+    </a>
+    <a href="withdraw.html" class="bnav-item">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      Withdraw
+    </a>
+    <a href="profile.html" class="bnav-item on">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      প্রোফাইল
+    </a>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="script.js"></script>
+  <script>
+    checkAuth();
+  </script>
+</body>
+</html>
+

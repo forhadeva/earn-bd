@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>EarnBD</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Baloo+Da+2:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --b900:#061547;--b800:#0e2d9e;--b700:#1a50db;--b600:#2563eb;
+  --b500:#3b82f6;--b400:#60a5fa;--b300:#93c5fd;--b200:#bfdbfe;
+  --b100:#dbeafe;--b50:#eff6ff;
+  --bg:#f0f5ff;--card:#fff;--border:#dde8ff;
+  --text:#06122e;--t2:#3a5280;--t3:#7b9acc;--t4:#b0c6e8;
+  --green:#059669;--g2:#d1fae5;--g3:#ecfdf5;
+  --red:#e11d48;--r2:#ffe4e6;
+  --amber:#d97706;--a2:#fef3c7;
+  --sh:0 2px 12px rgba(26,80,219,.09);
+  --sh2:0 6px 28px rgba(26,80,219,.16);
+  --sh3:0 14px 50px rgba(26,80,219,.22);
+}
+body{font-family:'Hind Siliguri',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ═══ SCREENS ═══ */
+.screen{display:none;min-height:100vh;}
+.screen.on{display:block;}
+
+/* ═══ AUTH ═══ */
+.auth-bg{
+  min-height:100vh;
+  background:linear-gradient(155deg,var(--b900) 0%,var(--b800) 45%,#1e45c0 75%,#2979ff 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding:40px 20px 30px;position:relative;overflow:hidden;
+}
+.auth-orb1{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.15),transparent 70%);top:-80px;right:-80px;pointer-events:none;}
+.auth-orb2{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(147,197,253,.10),transparent 70%);bottom:100px;left:-60px;pointer-events:none;}
+.auth-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+
+.auth-logo{font-family:'Baloo Da 2',cursive;font-size:32px;font-weight:800;color:#fff;margin-bottom:4px;position:relative;}
+.auth-logo span{color:#60a5fa;}
+.auth-logo-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#60a5fa,#a5f3fc);box-shadow:0 0 12px rgba(96,165,250,.9);margin-left:2px;}
+.auth-tagline{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:32px;position:relative;}
+
+.auth-card{
+  background:#fff;border-radius:24px;padding:26px 22px;
+  width:100%;max-width:400px;position:relative;
+  box-shadow:var(--sh3);
+}
+.auth-tabs{display:flex;background:var(--b50);border-radius:12px;padding:4px;margin-bottom:22px;}
+.auth-tab{
+  flex:1;padding:9px;border-radius:9px;border:none;
+  font-family:'Hind Siliguri',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all .2s;color:var(--t3);background:none;
+}
+.auth-tab.on{background:#fff;color:var(--b700);box-shadow:var(--sh);}
+
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--t2);margin-bottom:5px;}
+.field input{
+  width:100%;background:var(--b50);border:1.5px solid var(--b100);
+  border-radius:10px;padding:12px 14px;
+  font-family:'Hind Siliguri',sans-serif;font-size:14px;color:var(--text);
+  outline:none;transition:all .2s;
+}
+.field input:focus{border-color:var(--b600);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.09);}
+.field .ref-hint{font-size:11px;color:var(--t3);margin-top:4px;}
+
+.ref-preview{
+  background:var(--b50);border:1.5px solid var(--b200);border-radius:10px;
+  padding:10px 14px;margin-bottom:14px;display:none;
+}
+.ref-preview.show{display:block;}
+.ref-preview-lbl{font-size:11px;color:var(--t3);margin-bottom:2px;}
+.ref-preview-name{font-size:14px;font-weight:700;color:var(--b700);}
+
+.btn-auth{
+  width:100%;padding:14px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--b700),var(--b800));
+  color:#fff;font-family:'Hind Siliguri',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;
+  box-shadow:0 6px 20px rgba(26,80,219,.35);
+  transition:all .2s;margin-top:4px;
+}
+.btn-auth:hover{box-shadow:0 8px 28px rgba(26,80,219,.45);}
+.btn-auth:active{transform:scale(.98);}
+
+.auth-err{background:var(--r2);border:1px solid #fca5a5;color:var(--red);border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:12px;display:none;}
+.auth-err.show{display:block;}
+
+/* ═══ APP ═══ */
+#app{padding-bottom:76px;}
+
+.topbar{
+  background:linear-gradient(135deg,var(--b900),var(--b800));
+  height:62px;padding:0 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 4px 24px rgba(10,31,110,.35);
+}
+.tbar-logo{font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:800;color:#fff;}
+.tbar-logo span{color:#60a5fa;}
+.tbar-right{display:flex;align-items:center;gap:10px;}
+.tbar-bal{
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);
+  border-radius:999px;padding:5px 14px;
+  font-size:13px;font-weight:700;color:#fff;
+}
+.tbar-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--b400),var(--b600));
+  border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;cursor:pointer;
+}
+
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#fff;border-top:1px solid var(--border);
+  display:flex;box-shadow:0 -6px 30px rgba(26,80,219,.10);
+  z-index:200;height:64px;padding:0 8px;
+}
+.bnav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;border:none;background:none;
+  color:var(--t4);font-size:10.5px;font-weight:600;cursor:pointer;
+  font-family:'Hind Siliguri',sans-serif;transition:color .2s;
+}
+.bnav-item.on{color:var(--b700);}
+.bnav-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.bnav-item.on .bnav-icon{background:var(--b100);}
+.bnav-item.on .bnav-icon svg{stroke:var(--b700);}
+.bnav-item svg{stroke:currentColor;}
+
+/* ═══ PAGES ═══ */
+.pg{display:none;padding:16px;max-width:460px;margin:0 auto;animation:pgIn .28s cubic-bezier(.22,.68,0,1.2);}
+.pg.on{display:block;}
+@keyframes pgIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══ HERO ═══ */
+.hero{
+  background:linear-gradient(145deg,var(--b900),var(--b800) 40%,var(--b700) 75%,#2979ff);
+  border-radius:22px;padding:22px 20px 20px;margin-bottom:16px;
+  position:relative;overflow:hidden;box-shadow:var(--sh3);
+}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;}
+.hero-orb{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(147,197,253,.18),transparent 70%);top:-60px;right:-60px;pointer-events:none;}
+.hero-lbl{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:3px;position:relative;}
+.hero-amt{font-family:'Baloo Da 2',cursive;font-size:44px;font-weight:800;color:#fff;letter-spacing:-2px;line-height:1;position:relative;text-shadow:0 2px 20px rgba(99,160,255,.3);}
+.hero-amt sup{font-size:20px;opacity:.7;vertical-align:super;margin-right:3px;}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:16px;position:relative;}
+.hero-pills{display:flex;gap:8px;position:relative;}
+.hero-pill{flex:1;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:9px 10px;backdrop-filter:blur(8px);}
+.hero-pill-l{font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px;}
+.hero-pill-v{font-size:14px;font-weight:700;color:#fff;font-family:'Baloo Da 2',cursive;}
+
+/* ═══ STAT GRID ═══ */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.sc{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--sh);transition:transform .2s,box-shadow .2s;}
+.sc:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.sc-ico{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:9px;}
+.sc-num{font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:700;line-height:1;}
+.sc-lbl{font-size:11px;color:var(--t3);margin-top:4px;font-weight:500;}
+
+/* ═══ CARD ═══ */
+.card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:12px;box-shadow:var(--sh);}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-family:'Baloo Da 2',cursive;font-size:16px;font-weight:700;color:var(--text);}
+
+/* ═══ REFER PAGE ═══ */
+.ref-hero{
+  background:linear-gradient(145deg,var(--b900),var(--b800) 50%,#1e45c0);
+  border-radius:22px;padding:24px 20px;margin-bottom:16px;
+  position:relative;overflow:hidden;box-shadow:var(--sh3);
+  text-align:center;
+}
+.ref-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:22px 22px;pointer-events:none;}
+.ref-hero-orb{position:absolute;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.12),transparent 70%);top:-80px;left:50%;transform:translateX(-50%);pointer-events:none;}
+.ref-code-box{
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:14px;padding:14px 18px;margin:16px 0 14px;
+  position:relative;
+}
+.ref-code-lbl{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;}
+.ref-code{font-family:'Baloo Da 2',cursive;font-size:28px;font-weight:800;color:#fff;letter-spacing:4px;}
+.ref-link-txt{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;word-break:break-all;font-family:monospace;}
+.ref-action-row{display:flex;gap:8px;position:relative;}
+.ref-btn{
+  flex:1;padding:11px;border-radius:11px;border:none;
+  font-family:'Hind Siliguri',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.ref-btn-copy{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.25);}
+.ref-btn-share{background:linear-gradient(135deg,#059669,#047857);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.3);}
+.ref-btn:active{transform:scale(.97);}
+
+/* ═══ REFER LIST ITEM ═══ */
+.ref-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+  animation:fadeIn .3s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+.ref-item:last-child{border-bottom:none;}
+.ref-item-avatar{
+  width:42px;height:42px;border-radius:13px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo Da 2',cursive;font-size:18px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--b600),var(--b800));
+}
+.ref-item-name{font-size:14px;font-weight:700;color:var(--text);}
+.ref-item-meta{font-size:11px;color:var(--t3);margin-top:2px;}
+.ref-item-right{margin-left:auto;text-align:right;}
+.ref-item-comm{font-family:'Baloo Da 2',cursive;font-size:16px;font-weight:700;color:var(--b700);}
+.ref-item-plan{font-size:11px;margin-top:2px;}
+
+/* ═══ PLAN CARDS ═══ */
+.plan-card{
+  background:#fff;border:2px solid var(--border);border-radius:22px;
+  padding:22px 20px;margin-bottom:12px;cursor:pointer;
+  position:relative;overflow:hidden;box-shadow:var(--sh);
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+}
+.plan-card:hover{transform:translateY(-3px);box-shadow:var(--sh3);}
+.plan-card:active{transform:translateY(-1px);}
+.plan-blob{position:absolute;right:-40px;top:-40px;width:140px;height:140px;border-radius:50%;opacity:.07;pointer-events:none;}
+.plan-a .plan-blob{background:var(--b600);}
+.plan-b .plan-blob{background:var(--green);}
+.plan-a:hover{border-color:var(--b400);}
+.plan-b:hover{border-color:#34d399;}
+.plan-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:99px;margin-bottom:14px;}
+.plan-a .plan-chip{background:var(--b100);color:var(--b700);border:1px solid var(--b200);}
+.plan-b .plan-chip{background:var(--g2);color:#065f46;border:1px solid #a7f3d0;}
+.plan-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.plan-name-lbl{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
+.plan-price{font-family:'Baloo Da 2',cursive;font-size:36px;font-weight:800;letter-spacing:-1.5px;line-height:1;}
+.plan-a .plan-price{color:var(--b700);}
+.plan-b .plan-price{color:var(--green);}
+.plan-right{text-align:right;}
+.plan-r-lbl{font-size:10px;color:var(--t3);margin-bottom:3px;}
+.plan-r-val{font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:800;}
+.plan-a .plan-r-val{color:var(--b700);}
+.plan-b .plan-r-val{color:var(--green);}
+.plan-profit{font-size:12px;color:var(--green);font-weight:700;margin-top:2px;}
+.plan-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.plan-stat{border-radius:10px;padding:10px 12px;border:1px solid;}
+.plan-a .plan-stat{background:var(--b50);border-color:var(--b100);}
+.plan-b .plan-stat{background:var(--g3);border-color:#a7f3d0;}
+.plan-stat-l{font-size:10px;color:var(--t3);font-weight:500;margin-bottom:2px;}
+.plan-stat-v{font-size:14px;font-weight:700;color:var(--text);}
+.btn-plan{
+  width:100%;padding:13px;border-radius:12px;border:none;
+  font-family:'Hind Siliguri',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.plan-a .btn-plan{background:linear-gradient(135deg,var(--b700),var(--b800));color:#fff;box-shadow:0 6px 20px rgba(26,80,219,.35);}
+.plan-b .btn-plan{background:linear-gradient(135deg,#059669,#047857);color:#fff;box-shadow:0 6px 20px rgba(5,150,105,.3);}
+.btn-plan:active{transform:scale(.98);}
+
+/* ═══ ACTIVE PLAN BANNER ═══ */
+.active-plan-banner{
+  background:linear-gradient(135deg,var(--b50),#e4edff);
+  border:2px solid var(--b200);border-radius:16px;
+  padding:16px;margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;
+}
+.apb-ico{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--b600),var(--b800));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+
+/* ═══ PROGRESS ═══ */
+.prog-track{height:8px;background:var(--b100);border-radius:99px;overflow:hidden;margin:6px 0;}
+.prog-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--b600),var(--b400));transition:width .6s cubic-bezier(.4,0,.2,1);}
+
+/* ═══ WITHDRAW ═══ */
+.wd-status-box{border-radius:16px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.wd-status-ico{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.wd-lock-prog{width:100%;margin-top:10px;}
+.inp-wrap{margin-bottom:14px;}
+.inp-lbl{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:5px;display:block;}
+.inp{
+  width:100%;background:var(--b50);border:1.5px solid var(--b100);
+  border-radius:10px;padding:12px 14px;
+  font-family:'Hind Siliguri',sans-serif;font-size:14px;color:var(--text);
+  outline:none;transition:all .2s;
+}
+.inp:focus{border-color:var(--b600);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.09);}
+.bal-row{background:linear-gradient(135deg,var(--b50),#e4edff);border:1.5px solid var(--b200);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.bal-row-lbl{font-size:13px;color:var(--t2);}
+.bal-row-val{font-family:'Baloo Da 2',cursive;font-size:18px;font-weight:800;color:var(--b700);}
+
+/* ═══ HIST ROW ═══ */
+.hist-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.hist-row:last-child{border-bottom:none;}
+.hist-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:12px;flex-shrink:0;}
+.hist-meta{font-size:11px;color:var(--t3);margin-top:2px;}
+
+/* ═══ MODAL ═══ */
+.modal-ov{position:fixed;inset:0;z-index:500;background:rgba(6,21,71,.45);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center;}
+.modal-ov.on{display:flex;}
+.modal{background:#fff;border-radius:28px 28px 0 0;padding:8px 20px 36px;width:100%;max-width:460px;box-shadow:0 -14px 60px rgba(26,80,219,.28);animation:mup .3s cubic-bezier(.22,.68,0,1.1);}
+@keyframes mup{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal-pull{width:40px;height:4px;border-radius:2px;background:var(--border);margin:14px auto 20px;}
+.modal-title{font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:800;color:var(--text);margin-bottom:18px;}
+.modal-sg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.modal-sc{background:var(--b50);border:1px solid var(--b100);border-radius:12px;padding:12px;text-align:center;}
+.modal-sc-l{font-size:10px;color:var(--t3);font-weight:600;margin-bottom:4px;}
+.modal-sc-v{font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:800;color:var(--b700);}
+
+/* ═══ BUTTONS ═══ */
+.btn{width:100%;padding:14px;border-radius:12px;border:none;font-family:'Hind Siliguri',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:linear-gradient(135deg,var(--b700),var(--b800));color:#fff;box-shadow:0 6px 20px rgba(26,80,219,.35);}
+.btn-primary:hover{box-shadow:0 8px 28px rgba(26,80,219,.45);}
+.btn-muted{background:#f1f5f9;color:var(--t2);border:1px solid var(--border);}
+.btn-sm{width:auto;padding:8px 16px;font-size:13px;}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;}
+.badge-blue{background:var(--b100);color:var(--b700);}
+.badge-green{background:var(--g2);color:#065f46;}
+.badge-gray{background:#f1f5f9;color:var(--t3);}
+.badge-amber{background:var(--a2);color:var(--amber);}
+
+/* ═══ ALERT ═══ */
+.alert{border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;line-height:1.7;}
+.alert-blue{background:var(--b50);border:1px solid var(--b200);color:var(--b900);}
+.alert-green{background:var(--g3);border:1px solid #a7f3d0;color:#065f46;}
+.alert-amber{background:var(--a2);border:1px solid #fcd34d;color:#78350f;}
+
+/* ═══ EMPTY ═══ */
+.empty{text-align:center;padding:28px 12px;color:var(--t3);}
+.empty-ico{font-size:36px;margin-bottom:8px;}
+.empty-txt{font-size:13px;}
+
+/* ═══ TABLE ═══ */
+.tbl-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:linear-gradient(135deg,var(--b900),var(--b800));}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);letter-spacing:.8px;}
+td{padding:11px 14px;border-top:1px solid var(--border);color:var(--t2);}
+tr:hover td{background:var(--b50);}
+
+/* ═══ TOAST ═══ */
+#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--b900);color:#fff;border-radius:14px;padding:11px 22px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:all .25s cubic-bezier(.22,.68,0,1.2);pointer-events:none;white-space:nowrap;box-shadow:0 8px 30px rgba(6,21,71,.4);}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══ COMMISSION POPUP ═══ */
+.comm-pop{
+  position:fixed;top:80px;right:16px;z-index:9999;
+  background:#fff;border:2px solid var(--g2);border-radius:16px;
+  padding:14px 18px;box-shadow:var(--sh3);
+  transform:translateX(120%);transition:transform .4s cubic-bezier(.22,.68,0,1.2);
+  max-width:220px;
+}
+.comm-pop.on{transform:translateX(0);}
+.comm-pop-ico{font-size:24px;margin-bottom:6px;}
+.comm-pop-title{font-family:'Baloo Da 2',cursive;font-size:15px;font-weight:700;color:var(--green);}
+.comm-pop-sub{font-size:12px;color:var(--t2);margin-top:2px;}
+
+.ph{margin-bottom:16px;}
+.ph-title{font-family:'Baloo Da 2',cursive;font-size:24px;font-weight:800;color:var(--text);}
+.ph-sub{font-size:13px;color:var(--t3);margin-top:2px;}
+
+/* ═══ SEC HEADER ═══ */
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin:18px 0 10px;}
+.sec-title{font-family:'Baloo Da 2',cursive;font-size:16px;font-weight:700;color:var(--text);}
+.sec-link{font-size:12px;font-weight:600;color:var(--b600);cursor:pointer;padding:4px 10px;border-radius:8px;background:var(--b50);border:1px solid var(--b100);}
+
+/* ═══ LOGOUT ═══ */
+.logout-btn{width:100%;padding:13px;border-radius:12px;border:none;background:var(--r2);color:var(--red);font-family:'Hind Siliguri',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ AUTH SCREEN ═══════════ -->
+<div class="screen on" id="authScreen">
+  <div class="auth-bg">
+    <div class="auth-grid"></div>
+    <div class="auth-orb1"></div>
+    <div class="auth-orb2"></div>
+    <div class="auth-logo" style="margin-top:10px;">Earn<span>BD</span><span class="auth-logo-dot"></span></div>
+    <div class="auth-tagline">বিনিয়োগ করুন — প্রতিদিন আয় করুন</div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tabLogin" onclick="switchTab('login')">লগইন</button>
+        <button class="auth-tab" id="tabReg" onclick="switchTab('register')">রেজিস্টার</button>
+      </div>
+      <div class="auth-err" id="authErr"></div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="field"><label>মোবাইল নম্বর</label><input id="lPhone" type="tel" placeholder="01XXXXXXXXX"/></div>
+        <div class="field"><label>পাসওয়ার্ড</label><input id="lPass" type="password" placeholder="পাসওয়ার্ড"/></div>
+        <button class="btn-auth" onclick="doLogin()">লগইন করুন →</button>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="regForm" style="display:none;">
+        <div class="field"><label>নাম</label><input id="rName" type="text" placeholder="আপনার নাম"/></div>
+        <div class="field"><label>মোবাইল নম্বর</label><input id="rPhone" type="tel" placeholder="01XXXXXXXXX"/></div>
+        <div class="field"><label>পাসওয়ার্ড</label><input id="rPass" type="password" placeholder="পাসওয়ার্ড"/></div>
+        <div class="field">
+          <label>রেফার কোড (যদি থাকে)</label>
+          <input id="rRefCode" type="text" placeholder="যেমন: RAHAT-A1B2" oninput="previewRef(this.value)" style="text-transform:uppercase;"/>
+          <div class="ref-hint">রেফার কোড থাকলে দিন, না থাকলে ফাঁকা রাখুন</div>
+        </div>
+        <div class="ref-preview" id="refPreview">
+          <div class="ref-preview-lbl">রেফার কোড দাতা</div>
+          <div class="ref-preview-name" id="refPreviewName"></div>
+        </div>
+        <button class="btn-auth" onclick="doRegister()">রেজিস্টার করুন →</button>
+      </div>
+    </div>
+    <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.3);text-align:center;">© 2025 EarnBD</div>
+  </div>
+</div>
+
+<!-- ═══════════ APP SCREEN ═══════════ -->
+<div class="screen" id="appScreen">
+  <div id="app">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="tbar-logo">Earn<span>BD</span></div>
+      <div class="tbar-right">
+        <div class="tbar-bal">৳<span id="tbarBal">0</span></div>
+        <div class="tbar-avatar" id="tbarAvt" onclick="goPage('profile',4)">?</div>
+      </div>
+    </div>
+
+    <!-- ══ HOME PAGE ══ -->
+    <div class="pg on" id="pg-home">
+      <div class="hero">
+        <div class="hero-grid"></div><div class="hero-orb"></div>
+        <div class="hero-lbl">মোট ব্যালেন্স</div>
+        <div class="hero-amt"><sup>৳</sup><span id="hBal">0</span></div>
+        <div class="hero-sub">আজকের আয়: ৳<span id="hToday">0</span></div>
+        <div class="hero-pills">
+          <div class="hero-pill"><div class="hero-pill-l">রেফার আয়</div><div class="hero-pill-v">৳<span id="hRef">0</span></div></div>
+          <div class="hero-pill"><div class="hero-pill-l">প্ল্যান আয়</div><div class="hero-pill-v">৳<span id="hPlan">0</span></div></div>
+          <div class="hero-pill"><div class="hero-pill-l">উত্তোলন</div><div class="hero-pill-v">৳<span id="hWd">0</span></div></div>
+        </div>
+      </div>
+      <div class="sg">
+        <div class="sc"><div class="sc-ico" style="background:var(--b50);">👥</div><div class="sc-num" id="sRef">0</div><div class="sc-lbl">মোট রেফার</div></div>
+        <div class="sc"><div class="sc-ico" style="background:var(--g3);">📦</div><div class="sc-num" style="font-size:15px;" id="sPlan">নেই</div><div class="sc-lbl">চলতি প্ল্যান</div></div>
+        <div class="sc"><div class="sc-ico" style="background:#fffbeb;">📅</div><div class="sc-num" id="sDays">০</div><div class="sc-lbl">বাকি দিন</div></div>
+        <div class="sc"><div class="sc-ico" style="background:var(--r2);">💸</div><div class="sc-num" id="sWd">0</div><div class="sc-lbl">Withdraw সংখ্যা</div></div>
+      </div>
+      <div id="homePlanProg"></div>
+      <div class="sec-h"><div class="sec-title">💸 সাম্প্রতিক উত্তোলন</div><span class="sec-link" onclick="goPage('withdraw',3)">সব দেখুন</span></div>
+      <div class="card"><div id="homeWdHist"></div></div>
+      <div class="sec-h"><div class="sec-title">👥 সাম্প্রতিক রেফার</div><span class="sec-link" onclick="goPage('refer',2)">সব দেখুন</span></div>
+      <div class="card"><div id="homeRefList"></div></div>
+    </div>
+
+    <!-- ══ PLAN PAGE ══ -->
+    <div class="pg" id="pg-plans">
+      <div class="ph"><div class="ph-title">প্ল্যান বেছে নিন</div><div class="ph-sub">বিনিয়োগ করুন — প্রতিদিন আয় করুন</div></div>
+      <div id="activePlanBanner"></div>
+      <div class="alert alert-blue"><span>💡</span><span>প্ল্যান কিনলে ১০ দিন ধরে প্রতিদিন নির্দিষ্ট পরিমাণ আয় হবে।</span></div>
+      <div class="plan-card plan-a" onclick="openBuyModal('A')">
+        <div class="plan-blob"></div>
+        <div class="plan-chip">⭐ জনপ্রিয়</div>
+        <div class="plan-row">
+          <div><div class="plan-name-lbl">PLAN A</div><div class="plan-price">৳300</div><div style="font-size:12px;color:var(--t3);margin-top:2px;">বিনিয়োগ</div></div>
+          <div class="plan-right"><div class="plan-r-lbl">মোট আয়</div><div class="plan-r-val">৳500</div><div class="plan-profit">▲ ৳200 লাভ</div></div>
+        </div>
+        <div class="plan-stats">
+          <div class="plan-stat"><div class="plan-stat-l">দৈনিক আয়</div><div class="plan-stat-v" style="color:var(--b700);">৳50</div></div>
+          <div class="plan-stat"><div class="plan-stat-l">মেয়াদ</div><div class="plan-stat-v">১০ দিন</div></div>
+        </div>
+        <button class="btn-plan">কিনুন →</button>
+      </div>
+      <div class="plan-card plan-b" onclick="openBuyModal('B')">
+        <div class="plan-blob"></div>
+        <div class="plan-chip" style="background:var(--g2);color:#065f46;border-color:#a7f3d0;">💎 সর্বোচ্চ আয়</div>
+        <div class="plan-row">
+          <div><div class="plan-name-lbl">PLAN B</div><div class="plan-price">৳500</div><div style="font-size:12px;color:var(--t3);margin-top:2px;">বিনিয়োগ</div></div>
+          <div class="plan-right"><div class="plan-r-lbl">মোট আয়</div><div class="plan-r-val">৳1000</div><div class="plan-profit">▲ ৳500 লাভ</div></div>
+        </div>
+        <div class="plan-stats">
+          <div class="plan-stat"><div class="plan-stat-l">দৈনিক আয়</div><div class="plan-stat-v" style="color:var(--green);">৳100</div></div>
+          <div class="plan-stat"><div class="plan-stat-l">মেয়াদ</div><div class="plan-stat-v">১০ দিন</div></div>
+        </div>
+        <button class="btn-plan">কিনুন →</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;">তুলনা চার্ট</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>বিষয়</th><th>Plan A</th><th>Plan B</th></tr></thead>
+            <tbody>
+              <tr><td>বিনিয়োগ</td><td>৳300</td><td>৳500</td></tr>
+              <tr><td>দৈনিক</td><td style="font-weight:700;color:var(--b700);">৳50</td><td style="font-weight:700;color:var(--green);">৳100</td></tr>
+              <tr><td>মোট আয়</td><td>৳500</td><td>৳1000</td></tr>
+              <tr><td>লাভ</td><td style="font-weight:700;color:var(--b700);">৳200</td><td style="font-weight:700;color:var(--green);">৳500</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REFER PAGE ══ -->
+    <div class="pg" id="pg-refer">
+      <div class="ph"><div class="ph-title">রেফার করুন</div><div class="ph-sub">বন্ধুদের আমন্ত্রণ জানান — কমিশন পান</div></div>
+      <div class="ref-hero">
+        <div class="ref-hero-grid"></div><div class="ref-hero-orb"></div>
+        <div style="font-size:13px;color:rgba(255,255,255,.5);position:relative;">আপনার রেফার কোড</div>
+        <div class="ref-code-box">
+          <div class="ref-code-lbl">নিচের কোডটি শেয়ার করুন</div>
+          <div class="ref-code" id="myCode">———</div>
+          <div class="ref-link-txt" id="myLink">লোড হচ্ছে...</div>
+        </div>
+        <div class="ref-action-row">
+          <button class="ref-btn ref-btn-copy" onclick="copyCode()">📋 কোড কপি</button>
+          <button class="ref-btn ref-btn-share" onclick="shareCode()">📤 লিংক শেয়ার</button>
+        </div>
+      </div>
+      <div class="alert alert-green"><span>💰</span><span>কেউ আপনার কোড দিয়ে রেজিস্টার করলে সাথে সাথে আপনার রেফার লিস্টে যুক্ত হবে। তারপর যখন সে যেকোনো প্ল্যান কিনবে — আপনি <strong>১০% কমিশন</strong> পাবেন!</span></div>
+      <div class="sg">
+        <div class="sc"><div class="sc-ico" style="background:var(--b50);">👥</div><div class="sc-num" id="rTotal">0</div><div class="sc-lbl">মোট রেফার</div></div>
+        <div class="sc"><div class="sc-ico" style="background:var(--g3);">✅</div><div class="sc-num" id="rActive">0</div><div class="sc-lbl">সক্রিয় (প্ল্যান কিনেছে)</div></div>
+        <div class="sc"><div class="sc-ico" style="background:var(--a2);">⏳</div><div class="sc-num" id="rPending">0</div><div class="sc-lbl">Pending</div></div>
+        <div class="sc"><div class="sc-ico" style="background:var(--b50);">💵</div><div class="sc-num" style="font-size:16px;" id="rComm">৳0</div><div class="sc-lbl">কমিশন আয়</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;">রেফার তালিকা</div>
+        <div id="refList"></div>
+      </div>
+    </div>
+
+    <!-- ══ WITHDRAW PAGE ══ -->
+    <div class="pg" id="pg-withdraw">
+      <div class="ph"><div class="ph-title">Withdraw</div><div class="ph-sub">আপনার আয় তুলে নিন</div></div>
+      <div id="wdStatus"></div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px;">📋 নিয়মাবলী</div>
+        <div style="font-size:13px;color:var(--t2);">
+          <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:32px;height:32px;border-radius:10px;background:var(--b50);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">1️⃣</div><div>প্রথমবার: সরাসরি <strong style="color:var(--b700);">৳50</strong> তুলতে পারবেন</div></div>
+          <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:32px;height:32px;border-radius:10px;background:var(--a2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🔒</div><div>দ্বিতীয়বার থেকে: <strong>৫ জন সক্রিয় রেফার</strong> লাগবে</div></div>
+          <div style="display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);"><div style="width:32px;height:32px;border-radius:10px;background:var(--g3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">2️⃣</div><div>দ্বিতীয়বার: সর্বনিম্ন <strong style="color:var(--b700);">৳300</strong></div></div>
+          <div style="display:flex;gap:12px;align-items:center;padding:9px 0;"><div style="width:32px;height:32px;border-radius:10px;background:var(--b50);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">3️⃣</div><div>এরপর প্রতিবার: সর্বনিম্ন <strong style="color:var(--b700);">৳500</strong></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">Withdraw করুন</div>
+        <div class="inp-wrap"><label class="inp-lbl">পেমেন্ট পদ্ধতি</label><select class="inp" id="wdMethod"><option>bKash</option><option>Nagad</option><option>Rocket</option></select></div>
+        <div class="inp-wrap"><label class="inp-lbl">মোবাইল নম্বর</label><input class="inp" id="wdPhone" type="tel" placeholder="01XXXXXXXXX"/></div>
+        <div class="inp-wrap"><label class="inp-lbl">পরিমাণ (৳)</label><input class="inp" id="wdAmt" type="number" placeholder="0"/></div>
+        <div class="bal-row"><span class="bal-row-lbl">উপলব্ধ ব্যালেন্স</span><span class="bal-row-val">৳<span id="wdAvail">0</span></span></div>
+        <button class="btn btn-primary" onclick="submitWd()">💸 Withdraw করুন</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:14px;">উত্তোলনের ইতিহাস</div>
+        <div id="wdHistPage"></div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE PAGE ══ -->
+    <div class="pg" id="pg-profile">
+      <div class="ph"><div class="ph-title">প্রোফাইল</div></div>
+      <div class="card" id="profileCard"></div>
+      <div style="margin-top:8px;">
+        <button class="btn btn-muted" onclick="simDay()" style="margin-bottom:8px;">⏭ পরের দিন সিমুলেট করুন (ডেমো)</button>
+        <button class="logout-btn" onclick="logout()">🚪 লগআউট</button>
+      </div>
+    </div>
+
+  </div><!-- /app -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <button class="bnav-item on" onclick="goPage('home',0)">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      হোম
+    </button>
+    <button class="bnav-item" onclick="goPage('plans',1)">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      প্ল্যান
+    </button>
+    <button class="bnav-item" onclick="goPage('refer',2)">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+      রেফার
+    </button>
+    <button class="bnav-item" onclick="goPage('withdraw',3)">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+      Withdraw
+    </button>
+    <button class="bnav-item" onclick="goPage('profile',4)">
+      <div class="bnav-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      প্রোফাইল
+    </button>
+  </div>
+</div>
+
+<!-- BUY MODAL -->
+<div class="modal-ov" id="buyModal" onclick="maybeClose(event)">
+  <div class="modal">
+    <div class="modal-pull"></div>
+    <div class="modal-title" id="mTitle"></div>
+    <div class="modal-sg" id="mStats"></div>
+    <div class="alert alert-amber"><span>⚠️</span><span>প্ল্যান শুরু হলে বাতিল করা যাবে না।</span></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-muted" onclick="closeBuyModal()" style="flex:1;">বাতিল</button>
+      <button class="btn btn-primary" onclick="confirmBuy()" style="flex:2;">✅ নিশ্চিত করুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMMISSION POPUP -->
+<div class="comm-pop" id="commPop">
+  <div class="comm-pop-ico">🎉</div>
+  <div class="comm-pop-title" id="commPopTitle">কমিশন পেয়েছেন!</div>
+  <div class="comm-pop-sub" id="commPopSub"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// DB helpers (localStorage)
+// ══════════════════════════════════════════
+const DB={
+  getUsers:()=>JSON.parse(localStorage.getItem('eb_users')||'{}'),
+  setUsers:(u)=>localStorage.setItem('eb_users',JSON.stringify(u)),
+  getUser:(phone)=>DB.getUsers()[phone]||null,
+  saveUser:(u)=>{const all=DB.getUsers();all[u.phone]=u;DB.setUsers(all);},
+  getCurrent:()=>localStorage.getItem('eb_current')||null,
+  setCurrent:(p)=>localStorage.setItem('eb_current',p),
+  clearCurrent:()=>localStorage.removeItem('eb_current'),
+};
+
+function makeRefCode(name){
+  const clean=name.replace(/[^a-zA-Z\u0980-\u09FF]/g,'').substring(0,5).toUpperCase();
+  const rand=Math.random().toString(36).substring(2,6).toUpperCase();
+  return (clean||'USER')+'-'+rand;
+}
+function makeUser(name,phone,pass,refCode){
+  return{
+    name,phone,pass,
+    refCode:makeRefCode(name),
+    referredBy:refCode||null,
+    balance:0,refEarn:0,planEarn:0,wdTotal:0,
+    todayEarn:0,wdCount:0,
+    plan:null,
+    refs:[],       // [{phone,name,plan,commission,date}]
+    wdHist:[],
+  };
+}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+let authMode='login';
+function switchTab(mode){
+  authMode=mode;
+  document.getElementById('tabLogin').classList.toggle('on',mode==='login');
+  document.getElementById('tabReg').classList.toggle('on',mode==='register');
+  document.getElementById('loginForm').style.display=mode==='login'?'block':'none';
+  document.getElementById('regForm').style.display=mode==='register'?'block':'none';
+  document.getElementById('authErr').classList.remove('show');
+}
+function showErr(msg){const e=document.getElementById('authErr');e.textContent=msg;e.classList.add('show');}
+function hideErr(){document.getElementById('authErr').classList.remove('show');}
+
+function previewRef(val){
+  const v=val.trim().toUpperCase();
+  const el=document.getElementById('refPreview');
+  const nm=document.getElementById('refPreviewName');
+  if(!v){el.classList.remove('show');return;}
+  const users=DB.getUsers();
+  const found=Object.values(users).find(u=>u.refCode===v);
+  if(found){el.classList.add('show');nm.textContent='✅ '+found.name+'এর রেফার কোড';}
+  else{el.classList.add('show');nm.style.color='var(--red)';nm.textContent='❌ কোড পাওয়া যায়নি';}
+}
+
+function doLogin(){
+  hideErr();
+  const phone=document.getElementById('lPhone').value.trim();
+  const pass=document.getElementById('lPass').value;
+  if(!phone||!pass){showErr('সব তথ্য দিন');return;}
+  const u=DB.getUser(phone);
+  if(!u){showErr('অ্যাকাউন্ট পাওয়া যায়নি');return;}
+  if(u.pass!==pass){showErr('পাসওয়ার্ড ভুল');return;}
+  DB.setCurrent(phone);
+  loadApp();
+}
+
+function doRegister(){
+  hideErr();
+  const name=document.getElementById('rName').value.trim();
+  const phone=document.getElementById('rPhone').value.trim();
+  const pass=document.getElementById('rPass').value;
+  const refInput=document.getElementById('rRefCode').value.trim().toUpperCase();
+  if(!name||!phone||!pass){showErr('সব তথ্য দিন');return;}
+  if(phone.length<11){showErr('সঠিক মোবাইল নম্বর দিন');return;}
+  if(DB.getUser(phone)){showErr('এই নম্বরে আগেই অ্যাকাউন্ট আছে');return;}
+
+  // Validate ref code if provided
+  let refOwner=null;
+  if(refInput){
+    const users=DB.getUsers();
+    refOwner=Object.values(users).find(u=>u.refCode===refInput);
+    if(!refOwner){showErr('রেফার কোড সঠিক নয়');return;}
+  }
+
+  // Create user
+  const nu=makeUser(name,phone,pass,refInput||null);
+  DB.saveUser(nu);
+
+  // If referred → add to referrer's list immediately (pending)
+  if(refOwner){
+    refOwner.refs.push({phone:nu.phone,name:nu.name,plan:null,commission:0,date:today()});
+    DB.saveUser(refOwner);
+  }
+
+  DB.setCurrent(phone);
+  loadApp();
+  toast('🎉 স্বাগতম '+name+'!');
+}
+
+// ══════════════════════════════════════════
+// APP
+// ══════════════════════════════════════════
+let CUR=null; // current user object (live)
+
+function loadApp(){
+  const phone=DB.getCurrent();
+  if(!phone){showAuth();return;}
+  CUR=DB.getUser(phone);
+  if(!CUR){showAuth();return;}
+  document.getElementById('authScreen').classList.remove('on');
+  document.getElementById('appScreen').classList.add('on');
+  ui();
+}
+
+function showAuth(){
+  document.getElementById('authScreen').classList.add('on');
+  document.getElementById('appScreen').classList.remove('on');
+}
+
+function logout(){
+  DB.clearCurrent();CUR=null;showAuth();
+}
+
+function saveCur(){DB.saveUser(CUR);}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+const PGS=['home','plans','refer','withdraw','profile'];
+function goPage(id,idx){
+  PGS.forEach(p=>document.getElementById('pg-'+p).classList.remove('on'));
+  document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  document.querySelectorAll('.bnav-item')[idx].classList.add('on');
+  ui();
+}
+
+// ══════════════════════════════════════════
+// PLAN BUY
+// ══════════════════════════════════════════
+let selPlan=null;
+function openBuyModal(t){
+  if(CUR.plan){toast('⚠️ ইতিমধ্যে একটি প্ল্যান চলছে!');return;}
+  selPlan=t;
+  const p=t==='A'?{n:'Plan A',price:300,daily:50,total:500,profit:200}:{n:'Plan B',price:500,daily:100,total:1000,profit:500};
+  const c=t==='A'?'var(--b700)':'var(--green)';
+  document.getElementById('mTitle').textContent=p.n+' কিনুন';
+  document.getElementById('mStats').innerHTML=
+    `<div class="modal-sc"><div class="modal-sc-l">মূল্য</div><div class="modal-sc-v" style="color:${c};">৳${p.price}</div></div>
+     <div class="modal-sc"><div class="modal-sc-l">দৈনিক</div><div class="modal-sc-v" style="color:${c};">৳${p.daily}</div></div>
+     <div class="modal-sc"><div class="modal-sc-l">মোট আয়</div><div class="modal-sc-v" style="color:${c};">৳${p.total}</div></div>
+     <div class="modal-sc"><div class="modal-sc-l">লাভ</div><div class="modal-sc-v" style="color:var(--green);">+৳${p.profit}</div></div>`;
+  document.getElementById('buyModal').classList.add('on');
+}
+function closeBuyModal(){document.getElementById('buyModal').classList.remove('on');}
+function maybeClose(e){if(e.target.id==='buyModal')closeBuyModal();}
+
+function confirmBuy(){
+  const t=selPlan;
+  const daily=t==='A'?50:100;
+  const price=t==='A'?300:500;
+  CUR.plan={type:t,daysLeft:10,daily};
+  saveCur();
+
+  // ▶ Notify referrer — give 10% commission if this user was referred
+  if(CUR.referredBy){
+    const all=DB.getUsers();
+    const referrer=Object.values(all).find(u=>u.refCode===CUR.referredBy);
+    if(referrer){
+      const comm=Math.round(price*0.1);
+      // Find this user in referrer's refs list
+      const ri=referrer.refs.findIndex(r=>r.phone===CUR.phone);
+      if(ri>=0){
+        // Only give commission if not already given for this plan purchase
+        if(!referrer.refs[ri].plan){
+          referrer.refs[ri].plan=t;
+          referrer.refs[ri].commission=comm;
+          referrer.balance+=comm;
+          referrer.refEarn+=comm;
+          DB.saveUser(referrer);
+          // If referrer is currently logged in, update CUR too
+          if(DB.getCurrent()===referrer.phone){
+            CUR=DB.getUser(referrer.phone);
+          }
+          // Show commission popup if referrer is viewing
+          showCommPop(referrer.name,CUR.name,comm,t);
+        }
+      }
+    }
+  }
+
+  closeBuyModal();
+  toast('✅ Plan '+t+' কেনা হয়েছে! প্রতিদিন ৳'+daily+' আয় হবে।');
+  ui();
+}
+
+// ══════════════════════════════════════════
+// WITHDRAW
+// ══════════════════════════════════════════
+function submitWd(){
+  const amt=parseInt(document.getElementById('wdAmt').value)||0;
+  const m=document.getElementById('wdMethod').value;
+  const ph=document.getElementById('wdPhone').value.trim();
+  if(!ph){toast('⚠️ মোবাইল নম্বর দিন');return;}
+  const ar=CUR.refs.filter(r=>r.plan).length;
+  const wc=CUR.wdCount;
+  if(wc===0){
+    if(amt<50){toast('⚠️ সর্বনিম্ন ৳50');return;}
+    if(amt>CUR.balance){toast('⚠️ ব্যালেন্স নেই');return;}
+  }else{
+    if(ar<5){toast('⚠️ '+(5-ar)+' জন সক্রিয় রেফার দরকার');return;}
+    if(wc===1&&amt<300){toast('⚠️ সর্বনিম্ন ৳300');return;}
+    if(wc>=2&&amt<500){toast('⚠️ সর্বনিম্ন ৳500');return;}
+    if(amt>CUR.balance){toast('⚠️ ব্যালেন্স নেই');return;}
+  }
+  CUR.balance-=amt;CUR.wdTotal+=amt;CUR.wdCount++;
+  CUR.wdHist.unshift({amt,m,ph,date:today()});
+  saveCur();
+  document.getElementById('wdAmt').value='';document.getElementById('wdPhone').value='';
+  toast('✅ ৳'+amt+' Withdraw সফল!');ui();
+}
+
+// ══════════════════════════════════════════
+// SIMULATE DAILY EARN
+// ══════════════════════════════════════════
+function simDay(){
+  if(!CUR.plan||CUR.plan.daysLeft<=0){toast('⚠️ কোনো চলতি প্ল্যান নেই');return;}
+  CUR.balance+=CUR.plan.daily;
+  CUR.planEarn+=CUR.plan.daily;
+  CUR.todayEarn=CUR.plan.daily;
+  CUR.plan.daysLeft--;
+  if(CUR.plan.daysLeft===0){toast('🎉 প্ল্যান সম্পন্ন! সব আয় যুক্ত হয়েছে।');CUR.plan=null;}
+  else toast('📅 আজকের আয়: ৳'+CUR.todayEarn+' যুক্ত হয়েছে');
+  saveCur();ui();
+}
+
+// ══════════════════════════════════════════
+// REFER
+// ══════════════════════════════════════════
+function copyCode(){
+  const code=CUR.refCode;
+  navigator.clipboard.writeText(code).then(()=>toast('📋 রেফার কোড কপি হয়েছে: '+code));
+}
+function shareCode(){
+  const link=`${location.href.split('?')[0]}?ref=${CUR.refCode}`;
+  if(navigator.share)navigator.share({title:'EarnBD-তে জয়েন করুন!',text:`আমার রেফার কোড: ${CUR.refCode} — প্রতিদিন আয় করুন!`,url:link});
+  else{navigator.clipboard.writeText(link);toast('📋 লিংক কপি হয়েছে!');}
+}
+
+// ══════════════════════════════════════════
+// COMMISSION POPUP
+// ══════════════════════════════════════════
+function showCommPop(refName,newName,comm,planType){
+  // Only show if the current logged-in user IS the referrer
+  if(DB.getCurrent()!==Object.values(DB.getUsers()).find(u=>u.name===refName)?.phone) return;
+  const p=document.getElementById('commPop');
+  document.getElementById('commPopTitle').textContent='৳'+comm+' কমিশন পেয়েছেন!';
+  document.getElementById('commPopSub').textContent=newName+' Plan '+planType+' কিনেছে';
+  p.classList.add('on');
+  setTimeout(()=>p.classList.remove('on'),4000);
+}
+
+// ══════════════════════════════════════════
+// UI RENDER
+// ══════════════════════════════════════════
+function ui(){
+  if(!CUR) return;
+  // Reload from DB to get latest (in case referrer got commission)
+  CUR=DB.getUser(CUR.phone);
+
+  const ar=CUR.refs.filter(r=>r.plan).length;
+  const pen=CUR.refs.filter(r=>!r.plan).length;
+  const refLink=`${location.href.split('?')[0]}?ref=${CUR.refCode}`;
+
+  // Topbar
+  document.getElementById('tbarBal').textContent=CUR.balance;
+  document.getElementById('tbarAvt').textContent=CUR.name[0];
+
+  // Hero
+  set('hBal',CUR.balance);set('hToday',CUR.todayEarn);
+  set('hRef',CUR.refEarn);set('hPlan',CUR.planEarn);set('hWd',CUR.wdTotal);
+
+  // Stats
+  set('sRef',CUR.refs.length);
+  set('sPlan',CUR.plan?'Plan '+CUR.plan.type:'নেই');
+  set('sDays',CUR.plan?CUR.plan.daysLeft:'০');
+  set('sWd',CUR.wdCount);
+
+  // Plan progress on home
+  const hppEl=document.getElementById('homePlanProg');
+  if(CUR.plan){
+    const done=10-CUR.plan.daysLeft,pct=Math.round(done/10*100);
+    hppEl.innerHTML=`<div class="card" style="margin-bottom:12px;">
+      <div class="card-head"><div class="card-title">📈 প্ল্যান অগ্রগতি</div><span class="badge badge-blue">চলছে</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:13px;color:var(--t2);">Plan ${CUR.plan.type} — ৳${CUR.plan.daily}/দিন</span>
+        <span style="font-size:13px;font-weight:800;color:var(--b700);">${pct}%</span>
+      </div>
+      <div class="prog-track"><div class="prog-bar" style="width:${pct}%"></div></div>
+      <div style="font-size:12px;color:var(--t3);margin-top:6px;">${done} দিন সম্পন্ন | ${CUR.plan.daysLeft} দিন বাকি</div>
+    </div>`;
+  } else hppEl.innerHTML='';
+
+  // Active plan banner on plan page
+  const apb=document.getElementById('activePlanBanner');
+  if(CUR.plan){
+    apb.innerHTML=`<div class="active-plan-banner"><div class="apb-ico">📦</div><div style="flex:1;"><div style="font-size:11px;color:var(--t3);font-weight:600;">চলতি প্ল্যান</div><div style="font-family:'Baloo Da 2',cursive;font-size:18px;font-weight:700;color:var(--b700);">Plan ${CUR.plan.type}</div><div class="prog-track" style="margin:6px 0;"><div class="prog-bar" style="width:${Math.round((10-CUR.plan.daysLeft)/10*100)}%"></div></div><div style="font-size:11px;color:var(--t3);">${CUR.plan.daysLeft} দিন বাকি</div></div></div>`;
+  } else apb.innerHTML='';
+
+  // Refer page
+  set('myCode',CUR.refCode);
+  set('myLink',refLink);
+  set('rTotal',CUR.refs.length);set('rActive',ar);set('rPending',pen);
+  set('rComm','৳'+CUR.refEarn);
+
+  // Withdraw
+  set('wdAvail',CUR.balance);
+  renderWdStatus(ar);
+
+  // Profile
+  document.getElementById('profileCard').innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+      <div style="width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--b600),var(--b800));display:flex;align-items:center;justify-content:center;font-family:'Baloo Da 2',cursive;font-size:26px;font-weight:700;color:#fff;">${CUR.name[0]}</div>
+      <div><div style="font-family:'Baloo Da 2',cursive;font-size:20px;font-weight:700;">${CUR.name}</div><div style="font-size:13px;color:var(--t3);">${CUR.phone}</div></div>
+    </div>
+    <div style="background:var(--b50);border:1px solid var(--b100);border-radius:12px;padding:12px 14px;">
+      <div style="font-size:12px;color:var(--t3);margin-bottom:4px;">আপনার রেফার কোড</div>
+      <div style="font-family:'Baloo Da 2',cursive;font-size:22px;font-weight:800;color:var(--b700);letter-spacing:3px;">${CUR.refCode}</div>
+    </div>
+    ${CUR.referredBy?`<div style="margin-top:10px;font-size:12px;color:var(--t3);">রেফার কোড দাতা: <strong>${CUR.referredBy}</strong></div>`:''}`;
+
+  // Lists
+  renderRefList('refList');renderRefList('homeRefList',3);
+  renderWdHist('wdHistPage');renderWdHist('homeWdHist',3);
+}
+
+function renderRefList(id,lim){
+  const el=document.getElementById(id);if(!el)return;
+  const list=lim?CUR.refs.slice(0,lim):CUR.refs;
+  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-txt">এখনো কোনো রেফার নেই<br/><span style="font-size:12px;">আপনার কোড শেয়ার করুন!</span></div></div>';return;}
+  el.innerHTML=list.map(r=>{
+    const av=r.name[0];
+    const planBadge=r.plan
+      ?`<span class="badge badge-green">Plan ${r.plan}</span>`
+      :`<span class="badge badge-amber">Pending</span>`;
+    return`<div class="ref-item">
+      <div class="ref-item-avatar">${av}</div>
+      <div>
+        <div class="ref-item-name">${r.name}</div>
+        <div class="ref-item-meta">${r.date} · ${planBadge}</div>
+      </div>
+      <div class="ref-item-right">
+        <div class="ref-item-comm">${r.commission?'৳'+r.commission:'—'}</div>
+        <div class="ref-item-plan" style="color:${r.plan?'var(--green)':'var(--amber)'};">${r.plan?'কমিশন পেয়েছেন':'প্ল্যান কেনেনি'}</div>
+      </div>
+    </div>`;
+  }).join('')+(lim&&CUR.refs.length>lim?`<div style="text-align:center;font-size:12px;color:var(--t3);padding:8px 0;">আরো ${CUR.refs.length-lim}টি রেফার</div>`:'');
+}
+
+function renderWdHist(id,lim){
+  const el=document.getElementById(id);if(!el)return;
+  const list=lim?CUR.wdHist.slice(0,lim):CUR.wdHist;
+  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-ico">💸</div><div class="empty-txt">কোনো উত্তোলন নেই</div></div>';return;}
+  el.innerHTML=list.map(w=>`
+    <div class="hist-row">
+      <div style="display:flex;align-items:center;">
+        <div class="hist-ico" style="background:var(--b50);">💳</div>
+        <div><div style="font-size:15px;font-weight:700;color:var(--text);">৳${w.amt}</div><div class="hist-meta">${w.m} · ${w.ph} · ${w.date}</div></div>
+      </div>
+      <span class="badge badge-green">সফল</span>
+    </div>`).join('')+(lim&&CUR.wdHist.length>lim?`<div style="text-align:center;font-size:12px;color:var(--t3);padding:6px 0;">আরো ${CUR.wdHist.length-lim}টি</div>`:'');
+}
+
+function renderWdStatus(ar){
+  const el=document.getElementById('wdStatus');if(!el)return;
+  const wc=CUR.wdCount;
+  if(wc===0){
+    el.innerHTML=`<div class="wd-status-box" style="background:var(--g3);border:1.5px solid #a7f3d0;margin-bottom:14px;">
+      <div class="wd-status-ico" style="background:#d1fae5;">🔓</div>
+      <div><div style="font-weight:800;font-size:15px;color:#064e3b;">প্রথম Withdraw উন্মুক্ত</div><div style="font-size:13px;color:var(--green);margin-top:2px;">সরাসরি ৳50 তুলুন</div></div></div>`;
+  }else if(ar>=5){
+    const min=wc===1?300:500;
+    el.innerHTML=`<div class="wd-status-box" style="background:var(--b50);border:1.5px solid var(--b200);margin-bottom:14px;">
+      <div class="wd-status-ico" style="background:var(--b100);">🔓</div>
+      <div><div style="font-weight:800;font-size:15px;color:var(--b900);">Withdraw উন্মুক্ত</div><div style="font-size:13px;color:var(--b600);margin-top:2px;">সর্বনিম্ন ৳${min} তুলুন</div></div></div>`;
+  }else{
+    const need=5-ar;
+    el.innerHTML=`<div class="wd-status-box" style="background:var(--r2);border:1.5px solid #fca5a5;margin-bottom:14px;flex-direction:column;align-items:flex-start;">
+      <div style="display:flex;gap:14px;align-items:center;width:100%;">
+        <div class="wd-status-ico" style="background:#ffe4e6;">🔒</div>
+        <div><div style="font-weight:800;font-size:15px;color:var(--red);">Withdraw লক</div><div style="font-size:13px;color:#be123c;margin-top:2px;">আরো ${need} জন সক্রিয় রেফার দরকার</div></div>
+      </div>
+      <div class="wd-lock-prog">
+        <div class="prog-track" style="background:#fecaca;"><div class="prog-bar" style="width:${ar/5*100}%;background:linear-gradient(90deg,#f87171,var(--red));"></div></div>
+        <div style="font-size:11px;color:#be123c;margin-top:4px;font-weight:600;">${ar} / 5 সক্রিয়</div>
+      </div></div>`;
+  }
+}
+
+function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function today(){return new Date().toLocaleDateString('bn-BD');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);}
+
+// ══════════════════════════════════════════
+// INIT — check ?ref= in URL & auto-fill
+// ══════════════════════════════════════════
+(function init(){
+  const params=new URLSearchParams(location.search);
+  const refParam=params.get('ref');
+  if(refParam){
+    document.getElementById('rRefCode').value=refParam.toUpperCase();
+    previewRef(refParam);
+    switchTab('register');
+  }
+  const cur=DB.getCurrent();
+  if(cur)loadApp();
+})();
+</script>
+</body>
+</html>
