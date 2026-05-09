@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>EarnBD - গেম খেলে আয়</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tbar-logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer;">Earn<span>BD</span></div>
+    <div class="tbar-right">
+      <div class="tbar-bal">৳<span id="hBal">0</span></div>
+      <div class="tbar-avatar" id="avt">U</div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="ph" style="display:flex; align-items:center; gap:15px;">
+      <div onclick="window.location.href='dashboard.html'" style="width:36px; height:36px; border-radius:10px; background:#fff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--sh);">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      </div>
+      <div>
+        <div class="ph-title">গেম খেলে আয়</div>
+        <div class="ph-sub">সহজ গেম খেলে পয়েন্ট সংগ্রহ করুন</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+      <!-- Coin Flip Card -->
+      <a href="coin-flip.html" class="menu-item" style="padding: 20px;">
+        <div class="menu-icon" style="background:#e0f2fe; color:#0ea5e9; font-size:24px;">🪙</div>
+        <div class="menu-text">
+          <div class="menu-title" style="font-size:18px;">Coin Flip</div>
+          <div class="menu-sub">মাথা বা লেজ বেছে নিন এবং জিতুন!</div>
+        </div>
+        <div class="menu-arrow">❯</div>
+      </a>
+
+      <!-- Lucky Wheel Card -->
+      <a href="lucky-wheel.html" class="menu-item" style="padding: 20px;">
+        <div class="menu-icon" style="background:#fef3c7; color:#d97706; font-size:24px;">🎡</div>
+        <div class="menu-text">
+          <div class="menu-title" style="font-size:18px;">Lucky Wheel</div>
+          <div class="menu-sub">চাকা ঘোরান এবং আকর্ষণীয় পুরষ্কার জিতুন!</div>
+        </div>
+        <div class="menu-arrow">❯</div>
+      </a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>checkAuth();</script>
+</body>
+</html>

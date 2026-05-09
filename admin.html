@@ -477,10 +477,30 @@
       if(!confirm('Are you sure?')) return;
       try {
         const status = action === 'approve' ? 'success' : 'rejected';
+        
+        // 1. Get the withdrawal data to find the user UID and amount
+        const wdDoc = await db.collection('withdraws').doc(docId).get();
+        if (!wdDoc.exists) return toast('Withdraw request not found');
+        const wdData = wdDoc.data();
+        const uid = wdData.uid;
+        const amt = wdData.amt || 0;
+
+        // 2. Update the withdrawal status
         await db.collection('withdraws').doc(docId).update({ status: status });
+
+        // 3. If approved, update the user's wdTotal
+        if (action === 'approve') {
+          await db.collection('users').doc(uid).update({
+            wdTotal: firebase.firestore.FieldValue.increment(amt)
+          });
+        }
+        
         toast('✅ Done!');
         loadAllData();
-      } catch(e) { toast('Error: ' + e.message); }
+      } catch(e) { 
+        console.error(e);
+        toast('Error: ' + e.message); 
+      }
     }
 
     async function addNewPlan() {

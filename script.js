@@ -46,6 +46,7 @@ function checkAuth(requireAuth = true) {
     } catch(e) { console.error("Cache parse error", e); }
   }
 
+  let isSyncStarted = false;
   auth.onAuthStateChanged((user) => {
     if (user) {
       console.log("User logged in:", user.uid);
@@ -54,18 +55,23 @@ function checkAuth(requireAuth = true) {
           S.user = doc.data();
           localStorage.setItem('eb_user_cache', JSON.stringify(S.user));
           updateUI();
-          autoSyncReferrals(); // Initial sync
           
-          // Real-time Referral Listener (Sub-collection)
-          db.collection('users').doc(user.uid).collection('referrals').onSnapshot(() => {
-             updateUI(); 
-          });
+          // Ensure background sync and listeners only start once per session
+          if (!isSyncStarted) {
+            isSyncStarted = true;
+            autoSyncReferrals(); // Initial sync
+            
+            // Real-time Referral Listener (Sub-collection)
+            db.collection('users').doc(user.uid).collection('referrals').onSnapshot(() => {
+               updateUI(); 
+            });
 
-          // NEW: Instant Referral Ping Listener
-          listenForPings(S.user);
+            // NEW: Instant Referral Ping Listener
+            listenForPings(S.user);
 
-          // Periodic background sync (every 30 seconds)
-          setInterval(autoSyncReferrals, 30000);
+            // Periodic background sync (every 30 seconds)
+            setInterval(autoSyncReferrals, 30000);
+          }
         } else {
           // DO NOT auto-repair on signup page (wait for registration to finish)
           if (window.location.pathname.includes('signup.html')) {
@@ -106,9 +112,6 @@ function checkAuth(requireAuth = true) {
         }
       }, (err) => {
         console.error("Firestore Snapshot Error:", err);
-        if (err.code === 'permission-denied') {
-          console.error("Firebase Permission Denied. Check your Firestore rules.");
-        }
       });
 
       if (!requireAuth && (window.location.pathname.includes('login.html') || window.location.pathname.includes('signup.html'))) {
@@ -150,7 +153,13 @@ function updateUI() {
 
   if (sRef) sRef.textContent = S.user.refCount || 0;
   if (sPlanName) sPlanName.textContent = S.user.plan || 'নেই';
-  if (sDays) sDays.textContent = S.user.plan_days || 0;
+  if (sDays) {
+    let days = S.user.plan_days || 0;
+    if (days === 0 && S.user.active_plans && S.user.active_plans.length > 0) {
+      days = S.user.active_plans[0].rem !== undefined ? S.user.active_plans[0].rem : S.user.active_plans[0].days;
+    }
+    sDays.textContent = days;
+  }
   if (sWdCnt) sWdCnt.textContent = S.user.wdCount || 0;
   if (hToday) hToday.textContent = S.user.todayEarn || 0;
   if (hRef) hRef.textContent = S.user.refEarn || 0;
@@ -411,6 +420,9 @@ async function listenForPings(me) {
               const ping = change.doc.data();
               const pingId = change.doc.id;
 
+              // Immediately delete to prevent other listeners from processing
+              await db.collection('referral_pings').doc(pingId).delete().catch(()=>{});
+
               try {
                  const myRefCol = db.collection('users').doc(auth.currentUser.uid).collection('referrals');
                  const check = await myRefCol.doc(ping.from_uid).get();
@@ -427,8 +439,6 @@ async function listenForPings(me) {
                     });
                     toast(`🎉 অভিনন্দন! ${ping.from_name} আপনার রেফারে জয়েন করেছে!`);
                  }
-                 // Delete ping after processing
-                 await db.collection('referral_pings').doc(pingId).delete();
               } catch (e) { console.error("Ping process error:", e); }
            }
         }
@@ -503,5 +513,49 @@ async function collectDaily() {
   } catch(e) {
     console.error(e);
     toast("❌ ভুল হয়েছে: " + e.message);
+  }
+}
+function canPlay(gameType) {
+  const field = 'last_' + gameType;
+  if (!S.user || !S.user[field]) return true;
+  let last;
+  if (S.user[field].seconds) last = new Date(S.user[field].seconds * 1000);
+  else if (S.user[field].toDate) last = S.user[field].toDate();
+  else last = new Date(S.user[field]);
+  
+  const now = new Date();
+  const diff = now - last;
+  return diff >= 24 * 60 * 60 * 1000;
+}
+
+async function rewardGame(amt, type) {
+  if (!auth.currentUser) return;
+  const uid = auth.currentUser.uid;
+  const field = 'last_' + type;
+  
+  try {
+    const batch = db.batch();
+    const userRef = db.collection('users').doc(uid);
+    batch.update(userRef, {
+      bal: firebase.firestore.FieldValue.increment(amt),
+      [field]: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    const histRef = db.collection('history').doc();
+    batch.set(histRef, {
+      uid, amt, msg: `গেম বোনাস (${type})`, type_sub: "game",
+      date: new Date().toLocaleString('bn-BD'), timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    await batch.commit();
+    // Manual local update for instant UI feedback
+    if (S.user) {
+      S.user.bal = (S.user.bal || 0) + amt;
+      updateUI();
+    }
+    return true;
+  } catch(e) {
+    console.error(e);
+    return false;
   }
 }

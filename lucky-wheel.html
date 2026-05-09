@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>EarnBD - Lucky Wheel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <style>
+    .wheel-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 30px auto;
+    }
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 8px solid var(--b900);
+      position: relative;
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
+      background: conic-gradient(
+        #ef4444 0deg 45deg,
+        #3b82f6 45deg 90deg,
+        #10b981 90deg 135deg,
+        #f59e0b 135deg 180deg,
+        #ef4444 180deg 225deg,
+        #3b82f6 225deg 270deg,
+        #10b981 270deg 315deg,
+        #f59e0b 315deg 360deg
+      );
+    }
+    .wheel::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      border: 4px solid var(--b900);
+      z-index: 10;
+    }
+    .pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 40px;
+      background: var(--b900);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      z-index: 20;
+    }
+    .wheel-label {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+    .wheel-label span {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 800;
+      color: #fff;
+      font-size: 14px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="tbar-logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer;">Earn<span>BD</span></div>
+    <div class="tbar-right">
+      <div class="tbar-bal">৳<span id="hBal">0</span></div>
+      <div class="tbar-avatar" id="avt">U</div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="ph" style="display:flex; align-items:center; gap:15px;">
+      <div onclick="window.location.href='games.html'" style="width:36px; height:36px; border-radius:10px; background:#fff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+      </div>
+      <div>
+        <div class="ph-title">Lucky Wheel</div>
+        <div class="ph-sub">চাকা ঘোরান এবং জিতে নিন পুরষ্কার!</div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center; padding:30px 20px;">
+      <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel">
+          <!-- Labels will be added here -->
+          <div class="wheel-label" style="transform: rotate(22.5deg)"><span>৳২</span></div>
+          <div class="wheel-label" style="transform: rotate(67.5deg)"><span>৳৫</span></div>
+          <div class="wheel-label" style="transform: rotate(112.5deg)"><span>৳১</span></div>
+          <div class="wheel-label" style="transform: rotate(157.5deg)"><span>৳১০</span></div>
+          <div class="wheel-label" style="transform: rotate(202.5deg)"><span>৳০</span></div>
+          <div class="wheel-label" style="transform: rotate(247.5deg)"><span>৳৩</span></div>
+          <div class="wheel-label" style="transform: rotate(292.5deg)"><span>৳৮</span></div>
+          <div class="wheel-label" style="transform: rotate(337.5deg)"><span>৳১</span></div>
+        </div>
+      </div>
+
+      <div id="status" style="font-weight:700; font-size:16px; margin:20px 0; color:var(--t3);">আপনার ভাগ্য পরীক্ষা করুন!</div>
+
+      <button onclick="spinWheel()" class="btn btn-primary" id="spinBtn" style="width:200px; margin:0 auto;">চাকা ঘোরান (Spin)</button>
+
+      <div style="margin-top:25px; padding:15px; background:var(--b50); border-radius:12px; font-size:12px; color:var(--t3);">
+        সর্বোচ্চ ৳১০ পর্যন্ত জেতার সুযোগ!
+      </div>
+
+      <!-- Ad Reset Section -->
+      <div id="adResetSec" style="display:none; margin-top:20px; padding:15px; border:2px dashed var(--b200); border-radius:16px; background:#fff;">
+        <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:10px;">লিমিট শেষ? এই অ্যাডে ক্লিক করে লিমিট রিসেট করুন!</div>
+        <div onclick="resetGameLimit('spin')" style="width:100%; height:100px; background:linear-gradient(45deg, #f3f4f6, #e5e7eb); border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative;">
+          <img src="https://via.placeholder.com/300x100?text=Advertisement+Click+to+Reset" style="width:100%; height:100%; object-fit:cover;">
+          <div style="position:absolute; bottom:5px; right:5px; background:rgba(0,0,0,0.5); color:#fff; padding:2px 6px; border-radius:4px; font-size:9px;">Ad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    checkAuth();
+    let isSpinning = false;
+    let currentRotation = 0;
+
+    // Check limit on load
+    window.onload = () => {
+      setTimeout(() => {
+        if(!canPlay('spin')) {
+          document.getElementById('status').innerHTML = `<span style="color:var(--red)">⏳ আজকের লিমিট শেষ!</span>`;
+          document.getElementById('spinBtn').disabled = true;
+          document.getElementById('adResetSec').style.display = 'block';
+        }
+      }, 1000);
+    };
+
+    async function spinWheel() {
+      if(isSpinning) return;
+      if(!canPlay('spin')) {
+        toast("⏳ আজকের লিমিট শেষ!");
+        return;
+      }
+
+      isSpinning = true;
+      const wheel = document.getElementById('wheel');
+      const status = document.getElementById('status');
+      const btn = document.getElementById('spinBtn');
+      
+      btn.disabled = true;
+      status.textContent = 'চাকা ঘুরছে...';
+      
+      const extraRotation = 1800 + Math.floor(Math.random() * 360);
+      currentRotation += extraRotation;
+      
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(async () => {
+        isSpinning = false;
+        
+        const actualDeg = 360 - (currentRotation % 360);
+        const prizes = [
+          { label: "৳২", amt: 2 },
+          { label: "৳৫", amt: 5 },
+          { label: "৳১", amt: 1 },
+          { label: "৳১০", amt: 10 },
+          { label: "৳০", amt: 0 },
+          { label: "৳৩", amt: 3 },
+          { label: "৳৮", amt: 8 },
+          { label: "৳১", amt: 1 }
+        ];
+        const prizeIndex = Math.floor(actualDeg / 45);
+        const win = prizes[prizeIndex];
+        
+        status.innerHTML = `<span style="color:var(--green)">✅ অভিনন্দন! আপনি ${win.label} জিতেছেন!</span>`;
+        const success = await rewardGame(win.amt, 'spin');
+        if(success) {
+           toast(`🎉 আপনি ${win.label} বোনাস পেয়েছেন!`);
+           setTimeout(() => window.location.reload(), 2500);
+        }
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
