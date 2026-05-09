@@ -559,3 +559,24 @@ async function rewardGame(amt, type) {
     return false;
   }
 }
+
+async function resetGameLimit(gameType) {
+  if (!auth.currentUser) return;
+  const field = 'last_' + gameType;
+  
+  toast("⏳ লিমিট রিসেট হচ্ছে...");
+  
+  try {
+    // Reset the last play timestamp in Firestore
+    await db.collection('users').doc(auth.currentUser.uid).update({
+      [field]: null
+    });
+    
+    // Simple alert to ensure user knows it worked
+    toast("✅ লিমিট সফলভাবে রিসেট হয়েছে!");
+    setTimeout(() => window.location.reload(), 1500);
+  } catch(e) {
+    console.error("Reset Error:", e);
+    toast("❌ রিসেট করতে সমস্যা হয়েছে");
+  }
+}
