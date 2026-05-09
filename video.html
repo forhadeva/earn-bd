@@ -8,6 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://quge5.com/88/tag.min.js" data-zone="237738" async data-cfasync="false"></script>
 </head>
 <body>
   <!-- TOPBAR -->
@@ -31,48 +32,18 @@
     </div>
 
     <div id="videoTasks">
-      <!-- Video 1 -->
-      <div class="card" style="padding:20px; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:15px;">
-          <div style="width:45px; height:45px; background:var(--b50); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px;">🎬</div>
-          <div>
-            <div style="font-weight:800; font-size:15px; color:var(--text);">ভিডিও টাস্ক - ১</div>
-            <div style="font-size:11px; color:var(--green); font-weight:700;">বোনাস: ৳২</div>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="startVideoTask(1, 2, this)" style="padding:8px 15px; font-size:12px;">শুরু করুন</button>
-      </div>
-
-      <!-- Video 2 -->
-      <div class="card" style="padding:20px; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:15px;">
-          <div style="width:45px; height:45px; background:var(--b50); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px;">🎬</div>
-          <div>
-            <div style="font-weight:800; font-size:15px; color:var(--text);">ভিডিও টাস্ক - ২</div>
-            <div style="font-size:11px; color:var(--green); font-weight:700;">বোনাস: ৳২</div>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="startVideoTask(2, 2, this)" style="padding:8px 15px; font-size:12px;">শুরু করুন</button>
-      </div>
-
-      <!-- Video 3 -->
-      <div class="card" style="padding:20px; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:15px;">
-          <div style="width:45px; height:45px; background:var(--b50); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px;">🎬</div>
-          <div>
-            <div style="font-weight:800; font-size:15px; color:var(--text);">ভিডিও টাস্ক - ৩</div>
-            <div style="font-size:11px; color:var(--green); font-weight:700;">বোনাস: ৳২</div>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="startVideoTask(3, 2, this)" style="padding:8px 15px; font-size:12px;">শুরু করুন</button>
+      <!-- Tasks will be generated here -->
+      <div class="card" style="text-align:center; padding:30px;">
+        <div style="color:var(--t3);">টাস্ক লোড হচ্ছে...</div>
       </div>
     </div>
 
     <!-- Ad Reset Section -->
     <div id="adResetSec" style="display:none; margin:20px 0; padding:15px; border:2px dashed var(--b200); border-radius:16px; background:#fff; text-align:center;">
       <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:10px;">সব ভিডিও দেখা শেষ? রিসেট করুন!</div>
-      <div onclick="resetVideoLimits()" style="width:100%; height:80px; background:linear-gradient(45deg, #f3f4f6, #e5e7eb); border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-        <img src="https://via.placeholder.com/300x80?text=Click+to+Reset+All+Tasks" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">
+      <div onclick="resetVideoLimits()" style="width:100%; min-height:80px; background:linear-gradient(45deg, #f3f4f6, #e5e7eb); border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">
+        <script src="https://quge5.com/88/tag.min.js" data-zone="237738" async data-cfasync="false"></script>
+        <div style="font-weight:800; color:var(--b700);">রিসেট করতে এখানে ক্লিক করুন</div>
       </div>
     </div>
   </div>
@@ -83,6 +54,9 @@
     <div style="font-size:18px; font-weight:800; margin-bottom:10px;">অ্যাড লোড হচ্ছে...</div>
     <div style="font-size:40px; font-weight:900; color:var(--b400);" id="vTimer">15</div>
     <div style="font-size:12px; color:#ccc; margin-top:10px;">দয়া করে অপেক্ষা করুন, ভিডিওটি শেষ না হওয়া পর্যন্ত বের হবেন না।</div>
+    <div style="margin-top:20px; font-size:11px; background:rgba(255,255,255,0.1); padding:10px; border-radius:8px; text-align:center;">
+        বিজ্ঞাপনে ক্লিক করলে বোনাস নিশ্চিত হবে!
+    </div>
   </div>
 
   <script src="script.js"></script>
@@ -92,19 +66,42 @@
 
     window.onload = () => {
       setTimeout(() => {
+        generateTasks();
         updateTaskStatus();
       }, 1000);
     };
+
+    function generateTasks() {
+        const cont = document.getElementById('videoTasks');
+        let html = '';
+        for(let i=1; i<=50; i++) {
+            html += `
+              <div class="card" style="padding:20px; margin-bottom:15px; display:flex; align-items:center; justify-content:space-between;" id="task-card-${i}">
+                <div style="display:flex; align-items:center; gap:15px;">
+                  <div style="width:45px; height:45px; background:var(--b50); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px;">🎬</div>
+                  <div>
+                    <div style="font-weight:800; font-size:15px; color:var(--text);">ভিডিও টাস্ক - ${i}</div>
+                    <div style="font-size:11px; color:var(--green); font-weight:700;">বোনাস: ৳২</div>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="startVideoTask(${i}, 2, this)" style="padding:8px 15px; font-size:12px;">শুরু করুন</button>
+              </div>
+            `;
+        }
+        cont.innerHTML = html;
+    }
 
     function updateTaskStatus() {
       if(!S.user) return;
       const tasks = S.user.completed_videos || [];
       const now = Date.now();
+      const taskCount = 50;
+      let doneCount = 0;
       
-      document.querySelectorAll('#videoTasks .card').forEach((card, i) => {
-        const taskId = i + 1;
-        const btn = card.querySelector('button');
-        const taskData = tasks.find(t => t.id === taskId);
+      for(let i=1; i<=taskCount; i++) {
+        const btn = document.querySelector(`#task-card-${i} button`);
+        if(!btn) continue;
+        const taskData = tasks.find(t => t.id === i);
         
         if(taskData) {
           const lastTime = taskData.time.seconds ? taskData.time.seconds * 1000 : taskData.time;
@@ -114,13 +111,12 @@
             btn.style.background = '#f3f4f6';
             btn.style.color = '#9ca3af';
             btn.style.border = 'none';
+            doneCount++;
           }
         }
-      });
+      }
 
-      // Show reset if all done
-      const allDone = tasks.filter(t => (now - (t.time.seconds ? t.time.seconds * 1000 : t.time)) < 24 * 60 * 60 * 1000).length >= 3;
-      if(allDone) document.getElementById('adResetSec').style.display = 'block';
+      if(doneCount >= taskCount) document.getElementById('adResetSec').style.display = 'block';
     }
 
     async function startVideoTask(id, amt, btn) {
@@ -130,6 +126,10 @@
       const overlay = document.getElementById('vOverlay');
       const timerEl = document.getElementById('vTimer');
       overlay.style.display = 'flex';
+      
+      // Monetag MultiTag often triggers on any user interaction
+      // We can also use a Direct Link here if you have one
+      // For now, it will trigger the MultiTag when the user interacts with the page
       
       let timeLeft = 15;
       const timer = setInterval(async () => {
@@ -173,7 +173,9 @@
 
         await batch.commit();
         toast(`🎉 আপনি ৳${amt} বোনাস পেয়েছেন!`);
-        setTimeout(() => window.location.reload(), 1500);
+        // We don't reload the whole page to keep the list position
+        // Instead we just update the specific button
+        updateTaskStatus(); 
       } catch(e) {
         console.error(e);
         toast("❌ ভুল হয়েছে!");
