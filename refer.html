@@ -227,7 +227,21 @@
        } catch (e) { }
     }
 
-    checkAuth(true);
+    checkAuth();
+    
+    // Guest handling
+    setTimeout(() => {
+      if(!S.user) {
+        document.querySelector('.ref-hero').innerHTML = `
+          <div style="padding:40px 20px; text-align:center;">
+             <div style="font-size:40px; margin-bottom:15px;">🔒</div>
+             <div style="font-family:'Baloo Da 2',cursive; font-size:18px; font-weight:800; color:var(--text); margin-bottom:10px;">লগইন প্রয়োজন</div>
+             <div style="font-size:13px; color:var(--t3); margin-bottom:20px;">আপনার পার্সোনাল রেফার কোড দেখতে লগইন করুন।</div>
+             <button onclick="location.href='login.html'" class="btn btn-primary" style="padding:10px 30px; height:auto; width:auto;">লগইন করুন</button>
+          </div>
+        `;
+      }
+    }, 1000);
     // Auto sync every 30 seconds
     setInterval(() => { if(S.user) syncReferrals(true); }, 30000);
     const intv = setInterval(() => { if(S.user) { loadReferData(); clearInterval(intv); } }, 500);
