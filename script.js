@@ -19,6 +19,58 @@ window.auth = firebase.auth();
 const db = window.db;
 const auth = window.auth;
 
+// --- Telegram WebApp Auto-Login ---
+window.isTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe?.user);
+(async function initTelegramAuth() {
+  if (window.Telegram && window.Telegram.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    
+    const tgUser = tg.initDataUnsafe?.user;
+    if (tgUser && tgUser.id) {
+      console.log("Telegram User Detected:", tgUser.id);
+      const tgId = tgUser.id;
+      const tgName = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
+      const tgEmail = `tg_${tgId}@telegram.com`;
+      const tgPass = `pass_${tgId}_eb`; 
+
+      // Function to handle TG login/reg
+      const doTgAuth = async () => {
+        try {
+          await auth.signInWithEmailAndPassword(tgEmail, tgPass);
+          console.log("TG Auto-Login Success");
+        } catch (e) {
+          if (e.code === 'auth/user-not-found') {
+            try {
+              const cred = await auth.createUserWithEmailAndPassword(tgEmail, tgPass);
+              const uid = cred.user.uid;
+              const userData = {
+                uid,
+                name: tgName,
+                phone: tgId.toString(),
+                tg_id: tgId,
+                bal: 0,
+                plan: null,
+                ref_code: 'EB-' + tgId,
+                referred_by: localStorage.getItem('eb_pending_ref') || null,
+                created_at: firebase.firestore.FieldValue.serverTimestamp()
+              };
+              await db.collection('users').doc(uid).set(userData);
+              console.log("TG Auto-Registration Success");
+            } catch (regErr) { console.error("TG Reg Failed", regErr); }
+          }
+        }
+      };
+
+      // Execute if not already logged in
+      auth.onAuthStateChanged((user) => {
+        if (!user) doTgAuth();
+      });
+    }
+  }
+})();
+
 // --- Smart Referral Capture ---
 (function() {
   const params = new URLSearchParams(window.location.search);
@@ -140,7 +192,7 @@ function updateUI() {
       avt.onclick = () => window.location.href = 'login.html';
     }
     const uName = document.getElementById('uName') || document.getElementById('uname');
-    if (uName) uName.textContent = 'Guest User';
+    if (uName) uName.textContent = window.isTelegram ? 'Authenticating...' : 'Guest User';
     return;
   }
   
@@ -194,6 +246,10 @@ function updateUI() {
   if (pPhone) pPhone.textContent = S.user.phone || 'N/A';
   if (pCode) pCode.textContent = S.user.ref_code || '---';
   if (pAvt && S.user.name) pAvt.textContent = S.user.name[0].toUpperCase();
+
+  // Hide logout if TG
+  const logoutBtn = document.querySelector('.menu-item[onclick="doLogout()"]');
+  if (logoutBtn && window.isTelegram) logoutBtn.style.display = 'none';
 
   // Recent Activity (if on dashboard)
   if (document.getElementById('recentActivity')) renderRecentActivity();

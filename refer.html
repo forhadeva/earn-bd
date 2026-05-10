@@ -231,7 +231,7 @@
     
     // Guest handling
     setTimeout(() => {
-      if(!S.user) {
+      if(!S.user && !window.isTelegram) {
         document.querySelector('.ref-hero').innerHTML = `
           <div style="padding:40px 20px; text-align:center;">
              <div style="font-size:40px; margin-bottom:15px;">🔒</div>

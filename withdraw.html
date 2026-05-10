@@ -105,7 +105,7 @@
 
     // Guest handling
     setTimeout(() => {
-      if(!S.user) {
+      if(!S.user && !window.isTelegram) {
         const form = document.querySelector('.card');
         if (form) {
           form.innerHTML = `
