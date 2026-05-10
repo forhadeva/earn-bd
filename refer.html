@@ -227,7 +227,7 @@
        } catch (e) { }
     }
 
-    checkAuth();
+    checkAuth(true);
     // Auto sync every 30 seconds
     setInterval(() => { if(S.user) syncReferrals(true); }, 30000);
     const intv = setInterval(() => { if(S.user) { loadReferData(); clearInterval(intv); } }, 500);

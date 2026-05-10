@@ -36,7 +36,7 @@ let S = {
 
 // Auth Observer
 // Auth Observer
-function checkAuth(requireAuth = true) {
+function checkAuth(requireAuth = false) {
   // Load from cache first
   const cache = localStorage.getItem('eb_user_cache');
   if (cache) {
@@ -123,12 +123,26 @@ function checkAuth(requireAuth = true) {
       if (requireAuth && !window.location.pathname.includes('login.html') && !window.location.pathname.includes('signup.html')) {
         window.location.href = 'login.html';
       }
+      updateUI();
     }
   });
 }
 
 function updateUI() {
-  if (!S.user) return;
+  if (!S.user) {
+    const avt = document.getElementById('avt');
+    if (avt) {
+      avt.innerHTML = '<span style="font-size:10px;font-weight:800;">LOGIN</span>';
+      avt.style.width = '60px';
+      avt.style.borderRadius = '12px';
+      avt.style.background = 'var(--b700)';
+      avt.style.color = '#fff';
+      avt.onclick = () => window.location.href = 'login.html';
+    }
+    const uName = document.getElementById('uName') || document.getElementById('uname');
+    if (uName) uName.textContent = 'Guest User';
+    return;
+  }
   
   // Dashboard Elements
   const uName = document.getElementById('uName') || document.getElementById('uname');
@@ -139,7 +153,11 @@ function updateUI() {
   if (uName) uName.textContent = S.user.name || 'User';
   if (uBal) uBal.textContent = S.user.bal || 0;
   if (uBalLarge) uBalLarge.textContent = S.user.bal || 0;
-  if (uAvt) uAvt.textContent = (S.user.name || 'U')[0].toUpperCase();
+  if (uAvt) {
+    uAvt.textContent = (S.user.name || 'U')[0].toUpperCase();
+    uAvt.style = ""; // Reset guest styles
+    uAvt.onclick = () => window.location.href = 'profile.html';
+  }
 
   // Dashboard Stats
   const sRef = document.getElementById('sRef') || document.getElementById('rTotal');
