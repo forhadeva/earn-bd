@@ -21,6 +21,8 @@ const auth = window.auth;
 
 // --- Telegram WebApp Auto-Login ---
 window.isTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe?.user);
+window.tgAuthPromise = null;
+
 (async function initTelegramAuth() {
   if (window.Telegram && window.Telegram.WebApp) {
     const tg = window.Telegram.WebApp;
@@ -35,37 +37,50 @@ window.isTelegram = !!(window.Telegram && window.Telegram.WebApp && window.Teleg
       const tgEmail = `tg_${tgId}@telegram.com`;
       const tgPass = `pass_${tgId}_eb`; 
 
-      // Function to handle TG login/reg
-      const doTgAuth = async () => {
-        try {
-          await auth.signInWithEmailAndPassword(tgEmail, tgPass);
-          console.log("TG Auto-Login Success");
-        } catch (e) {
-          if (e.code === 'auth/user-not-found') {
-            try {
-              const cred = await auth.createUserWithEmailAndPassword(tgEmail, tgPass);
-              const uid = cred.user.uid;
-              const userData = {
-                uid,
-                name: tgName,
-                phone: tgId.toString(),
-                tg_id: tgId,
-                bal: 0,
-                plan: null,
-                ref_code: 'EB-' + tgId,
-                referred_by: localStorage.getItem('eb_pending_ref') || null,
-                created_at: firebase.firestore.FieldValue.serverTimestamp()
-              };
-              await db.collection('users').doc(uid).set(userData);
-              console.log("TG Auto-Registration Success");
-            } catch (regErr) { console.error("TG Reg Failed", regErr); }
+      window.tgAuthPromise = new Promise(async (resolve) => {
+        const doTgAuth = async () => {
+          try {
+            await auth.signInWithEmailAndPassword(tgEmail, tgPass);
+            console.log("TG Auto-Login Success");
+            resolve(true);
+          } catch (e) {
+            if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-credential') {
+              try {
+                const cred = await auth.createUserWithEmailAndPassword(tgEmail, tgPass);
+                const uid = cred.user.uid;
+                const userData = {
+                  uid,
+                  name: tgName,
+                  phone: tgId.toString(),
+                  tg_id: tgId,
+                  bal: 0,
+                  plan: null,
+                  ref_code: 'EB-' + tgId,
+                  referred_by: localStorage.getItem('eb_pending_ref') || null,
+                  created_at: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                await db.collection('users').doc(uid).set(userData);
+                console.log("TG Auto-Registration Success");
+                resolve(true);
+              } catch (regErr) { 
+                console.error("TG Reg Failed", regErr); 
+                resolve(false);
+              }
+            } else {
+              console.error("TG Login Failed", e);
+              resolve(false);
+            }
           }
-        }
-      };
+        };
 
-      // Execute if not already logged in
-      auth.onAuthStateChanged((user) => {
-        if (!user) doTgAuth();
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+          if (!user) {
+            doTgAuth();
+          } else {
+            resolve(true);
+          }
+          unsubscribe();
+        });
       });
     }
   }
@@ -99,7 +114,7 @@ function checkAuth(requireAuth = false) {
   }
 
   let isSyncStarted = false;
-  auth.onAuthStateChanged((user) => {
+  auth.onAuthStateChanged(async (user) => {
     if (user) {
       console.log("User logged in:", user.uid);
       db.collection('users').doc(user.uid).onSnapshot(async (doc) => {
@@ -108,63 +123,27 @@ function checkAuth(requireAuth = false) {
           localStorage.setItem('eb_user_cache', JSON.stringify(S.user));
           updateUI();
           
-          // Ensure background sync and listeners only start once per session
           if (!isSyncStarted) {
             isSyncStarted = true;
-            autoSyncReferrals(); // Initial sync
-            
-            // Real-time Referral Listener (Sub-collection)
-            db.collection('users').doc(user.uid).collection('referrals').onSnapshot(() => {
-               updateUI(); 
-            });
-
-            // NEW: Instant Referral Ping Listener
+            autoSyncReferrals();
+            db.collection('users').doc(user.uid).collection('referrals').onSnapshot(() => updateUI());
             listenForPings(S.user);
-
-            // Periodic background sync (every 30 seconds)
             setInterval(autoSyncReferrals, 30000);
           }
         } else {
-          // DO NOT auto-repair on signup page (wait for registration to finish)
-          if (window.location.pathname.includes('signup.html')) {
-            console.log("On signup page, skipping auto-repair...");
-            return;
-          }
-
+          if (window.location.pathname.includes('signup.html')) return;
           console.error("User document not found! Attempting auto-repair...");
           try {
-            // Auto-repair missing document
             const phone = user.email ? user.email.split('@')[0] : 'N/A';
             const name = user.displayName || (phone !== 'N/A' ? 'User ' + phone.slice(-4) : 'New User');
-            
             const userData = {
-              uid: user.uid,
-              name: name,
-              phone: phone,
-              bal: 0,
-              plan: null,
-              ref_code: genRefCode(),
-              referred_by: null,
-              created_at: firebase.firestore.FieldValue.serverTimestamp(),
-              is_repaired: true
+              uid: user.uid, name: name, phone: phone, bal: 0, plan: null,
+              ref_code: genRefCode(), referred_by: null, created_at: firebase.firestore.FieldValue.serverTimestamp(), is_repaired: true
             };
-            
             await db.collection('users').doc(user.uid).set(userData);
-            console.log("Account auto-repaired successfully.");
-          } catch (repairErr) {
-            console.error("Auto-repair failed:", repairErr);
-            if (requireAuth) {
-              document.body.innerHTML = `<div style="padding:40px; text-align:center; font-family:sans-serif;">
-                <h2 style="color:#e11d48">Account Error</h2>
-                <p>We couldn't initialize your account automatically. Please try logging out and in again.</p>
-                <button onclick="doLogout()" style="padding:10px 20px; background:#2563eb; color:white; border:none; border-radius:8px;">Logout</button>
-              </div>`;
-            }
-          }
+          } catch (repairErr) { console.error("Auto-repair failed:", repairErr); }
         }
-      }, (err) => {
-        console.error("Firestore Snapshot Error:", err);
-      });
+      }, (err) => console.error("Firestore Snapshot Error:", err));
 
       if (!requireAuth && (window.location.pathname.includes('login.html') || window.location.pathname.includes('signup.html'))) {
         window.location.href = 'dashboard.html';
@@ -172,6 +151,15 @@ function checkAuth(requireAuth = false) {
     } else {
       localStorage.removeItem('eb_user_cache');
       S.user = null;
+      
+      // If Telegram, wait for auth promise
+      if (window.isTelegram && window.tgAuthPromise) {
+        console.log("Waiting for TG Auth...");
+        await window.tgAuthPromise;
+        // After promise, auth state will trigger again if success
+        return;
+      }
+
       if (requireAuth && !window.location.pathname.includes('login.html') && !window.location.pathname.includes('signup.html')) {
         window.location.href = 'login.html';
       }
@@ -184,12 +172,15 @@ function updateUI() {
   if (!S.user) {
     const avt = document.getElementById('avt');
     if (avt) {
-      avt.innerHTML = '<span style="font-size:10px;font-weight:800;">LOGIN</span>';
+      avt.innerHTML = '<span style="font-size:10px;font-weight:800;">GUEST</span>';
       avt.style.width = '60px';
       avt.style.borderRadius = '12px';
       avt.style.background = 'var(--b700)';
       avt.style.color = '#fff';
-      avt.onclick = () => window.location.href = 'login.html';
+      avt.onclick = () => {
+        if (window.isTelegram) toast('⏳ অটোমেটিক লগইন হচ্ছে...');
+        else window.location.href = 'login.html';
+      };
     }
     const uName = document.getElementById('uName') || document.getElementById('uname');
     if (uName) uName.textContent = window.isTelegram ? 'Authenticating...' : 'Guest User';
@@ -213,27 +204,19 @@ function updateUI() {
 
   // Dashboard Stats
   const sRef = document.getElementById('sRef') || document.getElementById('rTotal');
-  const sPlanName = document.getElementById('sPlanName');
-  const sDays = document.getElementById('sDays');
-  const sWdCnt = document.getElementById('sWdCnt');
+  const sTaskCnt = document.getElementById('sTaskCnt');
+  const sAdCnt = document.getElementById('sAdCnt');
+  const sBonus = document.getElementById('sBonus');
   const hToday = document.getElementById('hToday');
   const hRef = document.getElementById('hRef') || document.getElementById('rEarn');
-  const hPlan = document.getElementById('hPlan');
   const hWd = document.getElementById('hWd');
 
   if (sRef) sRef.textContent = S.user.refCount || 0;
-  if (sPlanName) sPlanName.textContent = S.user.plan || 'নেই';
-  if (sDays) {
-    let days = S.user.plan_days || 0;
-    if (days === 0 && S.user.active_plans && S.user.active_plans.length > 0) {
-      days = S.user.active_plans[0].rem !== undefined ? S.user.active_plans[0].rem : S.user.active_plans[0].days;
-    }
-    sDays.textContent = days;
-  }
-  if (sWdCnt) sWdCnt.textContent = S.user.wdCount || 0;
+  if (sTaskCnt) sTaskCnt.textContent = S.user.total_tasks || 0;
+  if (sAdCnt) sAdCnt.textContent = S.user.ad_tasks_today || 0;
+  if (sBonus) sBonus.textContent = S.user.todayEarn || 0;
   if (hToday) hToday.textContent = S.user.todayEarn || 0;
   if (hRef) hRef.textContent = S.user.refEarn || 0;
-  if (hPlan) hPlan.textContent = S.user.planEarn || 0;
   if (hWd) hWd.textContent = S.user.wdTotal || 0;
   
   // Profile Elements
@@ -246,6 +229,25 @@ function updateUI() {
   if (pPhone) pPhone.textContent = S.user.phone || 'N/A';
   if (pCode) pCode.textContent = S.user.ref_code || '---';
   if (pAvt && S.user.name) pAvt.textContent = S.user.name[0].toUpperCase();
+
+  // Telegram Photo Sync
+  if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+      const tgUser = Telegram.WebApp.initDataUnsafe.user;
+      if (tgUser.photo_url) {
+          if (uAvt) {
+              uAvt.style.backgroundImage = `url('${tgUser.photo_url}')`;
+              uAvt.style.backgroundSize = 'cover';
+              uAvt.style.backgroundPosition = 'center';
+              uAvt.textContent = '';
+          }
+          if (pAvt) {
+              pAvt.style.backgroundImage = `url('${tgUser.photo_url}')`;
+              pAvt.style.backgroundSize = 'cover';
+              pAvt.style.backgroundPosition = 'center';
+              pAvt.textContent = '';
+          }
+      }
+  }
 
   // Hide logout if TG
   const logoutBtn = document.querySelector('.menu-item[onclick="doLogout()"]');
@@ -473,7 +475,8 @@ function toast(msg) {
 function doLogout() {
   auth.signOut().then(() => {
     localStorage.clear();
-    window.location.href = 'login.html';
+    if (window.isTelegram) window.location.reload();
+    else window.location.href = 'login.html';
   });
 }
 

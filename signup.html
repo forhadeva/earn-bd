@@ -18,175 +18,51 @@
     <div class="auth-orb2"></div>
     
     <div class="auth-logo">Earn<span>BD</span><span class="auth-logo-dot"></span></div>
-    <div class="auth-tagline">বিনিয়োগ করুন — প্রতিদিন আয় করুন</div>
     
-    <div class="auth-card">
-      <div class="auth-tabs">
-        <button class="auth-tab" onclick="location.href='login.html'">লগইন</button>
-        <button class="auth-tab on">রেজিস্টার</button>
+    <div class="auth-card" style="text-align:center; padding: 40px 20px;">
+      <div id="tg-loading">
+        <div class="loader-tg"></div>
+        <h3 style="margin-top:20px; color:var(--text); font-family:'Baloo Da 2', cursive;">অটোমেটিক রেজিস্ট্রেশন হচ্ছে...</h3>
+        <p style="font-size:13px; color:var(--t3); margin-top:8px;">অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন</p>
       </div>
-      
-      <form id="regForm" onsubmit="doSignup(event)">
-        <div class="field">
-          <label>পূর্ণ নাম</label>
-          <input type="text" placeholder="আপনার নাম লিখুন" id="sName">
-        </div>
-        <div class="field">
-          <label>মোবাইল নম্বর</label>
-          <input type="tel" placeholder="01XXXXXXXXX" id="sPhone">
-        </div>
-        <div class="field">
-          <label>পাসওয়ার্ড তৈরি করুন</label>
-          <input type="password" placeholder="পাসওয়ার্ড" id="sPass">
-        </div>
-        <div class="field">
-          <label>রেফার কোড (ঐচ্ছিক)</label>
-          <input type="text" placeholder="যেমন: RAHAT-A1B2" id="sRef" style="text-transform:uppercase;">
-          <div class="ref-hint">রেফার কোড থাকলে দিন, না থাকলে ফাঁকা রাখুন</div>
-        </div>
-        
-        <div class="ref-preview" id="refPreview" style="background:var(--b50); border:1.5px solid var(--b200); border-radius:10px; padding:10px 14px; margin-bottom:14px; display:none;">
-          <div style="font-size:11px; color:var(--t3); margin-bottom:2px;">রেফার কোড দাতা</div>
-          <div id="refPreviewName" style="font-size:14px; font-weight:700; color:var(--b700);"></div>
-        </div>
-        
-        <button type="submit" class="btn-auth" id="signupBtn">রেজিস্ট্রেশন করুন →</button>
 
-        <div style="text-align:center; margin-top:20px;">
-          <a href="dashboard.html" style="font-size:14px; color:var(--b700); font-weight:800; text-decoration:none; padding: 10px 20px; border: 1.5px dashed var(--b100); border-radius: 12px; display: inline-block;">লগইন ছাড়াই ভিজিট করুন →</a>
-        </div>
-
-        <p style="text-align:center;font-size:13px;margin-top:24px;color:var(--t3);">
-          ইতিমধ্যে একাউন্ট আছে? <a href="login.html" style="color:var(--b700);font-weight:800;text-decoration:none;">লগইন করুন</a>
-        </p>
-      </form>
+      <div id="non-tg" style="display:none;">
+        <h3 style="color:var(--text); font-family:'Baloo Da 2', cursive;">টেলিগ্রাম থেকে প্রবেশ করুন</h3>
+        <p style="font-size:13px; color:var(--t3); margin-top:8px;">এই অ্যাপটি শুধুমাত্র টেলিগ্রাম বটের মাধ্যমে ব্যবহার করা যাবে.</p>
+        <a href="https://t.me/EarnBD_Bot" class="btn-auth" style="margin-top:20px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">বটে যান →</a>
+      </div>
     </div>
     
     <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.3);text-align:center;">© 2025 EarnBD</div>
   </div>
 
+  <style>
+    .loader-tg {
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: var(--b700);
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
   <div id="toast"></div>
 
   <script src="script.js"></script>
   <script>
-    function genRefCode() {
-      const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let code = 'EB-';
-      for(let i=0; i<6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-      return code;
-    }
-
-    // Smart Auto-fill referral logic
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref') || localStorage.getItem('eb_pending_ref');
-    const refInput = document.getElementById('sRef');
-    if (refCode) {
-      refInput.value = refCode;
-      setTimeout(() => checkRef(refCode), 500);
-    }
-
-    // Real-time Ref Check
-    refInput.addEventListener('input', (e) => checkRef(e.target.value.trim()));
-
-    let refTimeout;
-    async function checkRef(code) {
-       const preview = document.getElementById('refPreview');
-       const nameEl = document.getElementById('refPreviewName');
-       
-       if (!code || code.length < 5) {
-          preview.style.display = 'none';
-          return;
-       }
-       
-       preview.style.display = 'block';
-       nameEl.innerHTML = '🔍 চেক করা হচ্ছে...';
-       nameEl.style.color = 'var(--t3)';
-
-       // Debounce to prevent too many requests
-       clearTimeout(refTimeout);
-       refTimeout = setTimeout(async () => {
-          try {
-             // Try to sign in anonymously if not logged in (ignore errors if blocked)
-             if (!firebase.auth().currentUser) {
-                await firebase.auth().signInAnonymously().catch(() => {});
-             }
-
-             // Search for the referrer
-             const snap = await firebase.firestore().collection('users').where('ref_code', '==', code.toUpperCase()).get();
-             
-             if (!snap.empty) {
-                const data = snap.docs[0].data();
-                nameEl.innerHTML = `✅ আপনি <b>${data.name}</b> এর রেফারে জয়েন করছেন।`;
-                nameEl.style.color = 'var(--green)';
-             } else {
-                // Try searching by phone number as fallback
-                const snap2 = await firebase.firestore().collection('users').where('phone', '==', code).get();
-                if (!snap2.empty) {
-                   const data2 = snap2.docs[0].data();
-                   nameEl.innerHTML = `✅ আপনি <b>${data2.name}</b> এর রেফারে জয়েন করছেন।`;
-                   nameEl.style.color = 'var(--green)';
-                } else {
-                   nameEl.innerHTML = '❌ রেফার কোডটি পাওয়া যায়নি';
-                   nameEl.style.color = 'var(--red)';
-                }
-             }
-          } catch (e) {
-             console.error("Ref check error:", e);
-             nameEl.innerHTML = '⚠️ ভেরিফিকেশন স্কিপ হয়েছে';
-             nameEl.style.color = 'var(--t3)';
-          }
-       }, 600); // Wait 600ms after user stops typing
-    }
-
-    async function doSignup(e){
-      if(e) e.preventDefault();
-      const name = document.getElementById('sName').value.trim();
-      const phone = document.getElementById('sPhone').value.trim();
-      const password = document.getElementById('sPass').value.trim();
-      const refBy = document.getElementById('sRef').value.trim();
-      
-      if(!name || !phone || !password) return toast('সবগুলো ঘর পূরণ করুন');
-      if(phone.length < 11) return toast('সঠিক মোবাইল নম্বর দিন');
-      
-      toast('⏳ প্রসেসিং হচ্ছে...');
-      
-      try {
-        const email = phone + '@earnbd.com';
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
-        const uid = cred.user.uid;
-        
-        const userData = {
-          uid: uid,
-          name: name,
-          phone: phone,
-          bal: 0,
-          plan: null,
-          ref_code: genRefCode(),
-          referred_by: refBy || localStorage.getItem('eb_pending_ref') || null,
-          created_at: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        await db.collection('users').doc(uid).set(userData);
-
-        // --- NEW: Referral Ping for Instant Sync ---
-        const finalRef = refBy || localStorage.getItem('eb_pending_ref');
-        if (finalRef) {
-           await db.collection('referral_pings').add({
-              to: finalRef,
-              from_uid: uid,
-              from_name: name,
-              from_phone: phone,
-              time: firebase.firestore.FieldValue.serverTimestamp()
-           });
-        }
-
-        toast('✅ রেজিস্ট্রেশন সফল হয়েছে!');
-        setTimeout(() => window.location.href = 'dashboard.html', 1500);
-
-      } catch (e) {
-        console.error(e);
-        toast('❌ এরর: ' + e.message);
-      }
+    if (!window.isTelegram) {
+      document.getElementById('tg-loading').style.display = 'none';
+      document.getElementById('non-tg').style.display = 'block';
+    } else {
+      // checkAuth will handle the redirect to dashboard once logged in
+      checkAuth(false);
     }
   </script>
 </body>

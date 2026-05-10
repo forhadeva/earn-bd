@@ -8,6 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://quge5.com/88/tag.min.js" data-zone="237738" async data-cfasync="false"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -28,9 +29,9 @@
     </div>
 
     <!-- User Info Card -->
-    <div class="card" id="profileCard" style="padding:22px;">
+     <div class="card" id="profileCard" style="padding:22px;">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
-        <div class="user-avatar" id="pAvt">U</div>
+        <div class="user-avatar" id="pAvt" style="background-size: cover; background-position: center; border: 2px solid #e0e7ff;">U</div>
         <div>
           <div id="pName" style="font-family:'Baloo Da 2',cursive;font-size:20px;font-weight:700;color:var(--text);">লোড হচ্ছে...</div>
           <div id="pPhone" style="font-size:13px;color:var(--t3);">...</div>
@@ -97,13 +98,6 @@
         <div class="menu-arrow">❯</div>
       </a>
 
-      <!-- Logout -->
-      <div class="menu-item" onclick="doLogout()" style="margin-top:20px; border-color:#fee2e2; background:#fff;">
-        <div class="menu-icon" style="background:#fef2f2; color:var(--red);">🚪</div>
-        <div class="menu-text">
-          <div class="menu-title" style="color:var(--red);">লগআউট করুন</div>
-        </div>
-      </div>
 
     </div>
   </div>
@@ -114,10 +108,7 @@
       <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
       হোম
     </div>
-    <div onclick="window.location.href='plans.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-      প্ল্যান
-    </div>
+    
     <div onclick="window.location.href='task.html'" class="bnav-item">
       <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
       টাস্ক
@@ -144,25 +135,46 @@
 
     // Guest handling
     setTimeout(() => {
-      if(!S.user) {
+      if(!S.user && !window.isTelegram) {
         document.getElementById('profileCard').innerHTML = `
           <div style="padding:20px; text-align:center;">
              <div style="font-size:40px; margin-bottom:15px;">👤</div>
-             <div style="font-family:'Baloo Da 2',cursive; font-size:18px; font-weight:800; color:var(--text); margin-bottom:10px;">লগইন প্রয়োজন</div>
-             <div style="font-size:13px; color:var(--t3); margin-bottom:20px;">আপনার প্রোফাইল দেখতে লগইন করুন।</div>
-             <button onclick="location.href='login.html'" class="btn btn-primary" style="padding:10px 30px; height:auto; width:auto;">লগইন করুন</button>
+             <div style="font-family:'Baloo Da 2',cursive; font-size:18px; font-weight:800; color:var(--text); margin-bottom:10px;">টেলিগ্রাম লগইন প্রয়োজন</div>
+             <div style="font-size:13px; color:var(--t3); margin-bottom:20px;">এই অ্যাপটি ব্যবহারের জন্য টেলিগ্রাম বট থেকে প্রবেশ করুন।</div>
+             <a href="https://t.me/EarnBD_Bot" class="btn btn-primary" style="padding:10px 30px; height:auto; width:auto; text-decoration:none; display:inline-block;">বটে যান</a>
           </div>
         `;
         // Disable menu items for guests
         document.querySelectorAll('.menu-item').forEach(item => {
-           if (!item.href.includes('wa.me') && !item.href.includes('t.me')) {
+           if (!item.href || (!item.href.includes('wa.me') && !item.href.includes('t.me'))) {
               item.style.opacity = '0.5';
               item.onclick = (e) => { e.preventDefault(); toast('🔒 আগে লগইন করুন'); };
            }
         });
+        document.getElementById('pName').textContent = 'অটোমেটিক লগইন হচ্ছে...';
       }
-    }, 1000);
+      
+      // Load Telegram Profile Photo
+      if (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
+          const user = Telegram.WebApp.initDataUnsafe.user;
+          if (user.photo_url) {
+              const pAvt = document.getElementById('pAvt');
+              const hAvt = document.getElementById('avt');
+              if (pAvt) {
+                  pAvt.style.backgroundImage = `url('${user.photo_url}')`;
+                  pAvt.textContent = '';
+              }
+              if (hAvt) {
+                  hAvt.style.backgroundImage = `url('${user.photo_url}')`;
+                  hAvt.style.backgroundSize = 'cover';
+                  hAvt.style.backgroundPosition = 'center';
+                  hAvt.textContent = '';
+              }
+          }
+      }
+    }, 1500);
   </script>
 </body>
 </html>
+
 

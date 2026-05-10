@@ -3,17 +3,139 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>EarnBD - রেফার</title>
+  <title>EarnBD - রেফার করুন</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://quge5.com/88/tag.min.js" data-zone="237738" async data-cfasync="false"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    .ref-card-premium {
+      background: #1e1b4b;
+      border-radius: 24px;
+      padding: 30px 20px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+      box-shadow: 0 15px 35px rgba(30, 27, 75, 0.2);
+    }
+    .ref-gift-ico {
+      width: 40px; height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .ref-title {
+      font-family: 'Baloo Da 2', cursive;
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 15px;
+    }
+    .ref-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+    .ref-desc b { color: #fff; }
+
+    .ref-badge {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #93c5fd;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 25px;
+    }
+
+    .ref-link-box {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .ref-link-box input {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 10px 12px;
+      color: #cbd5e1;
+      font-size: 12px;
+      outline: none;
+      font-family: monospace;
+    }
+    .ref-copy-btn-inner {
+      width: 36px; height: 36px;
+      background: #a855f7;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .ref-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .ref-action-btn {
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      color: #fff;
+      transition: transform 0.2s;
+    }
+    .ref-action-btn:active { transform: scale(0.97); }
+    
+    .btn-copy-main { background: linear-gradient(135deg, #7c3aed, #db2777); }
+    .btn-share-main { background: linear-gradient(135deg, #6366f1, #a855f7); }
+
+    .ref-list-h {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 35px;
+        margin-bottom: 15px;
+    }
+    .ref-list-h h3 {
+        font-size: 18px;
+        font-weight: 800;
+        color: #1e293b;
+        font-family: 'Baloo Da 2';
+    }
+    .total-badge {
+        background: #dbeafe;
+        color: #1e40af;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+  </style>
 </head>
 <body>
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tbar-logo">Earn<span>BD</span></div>
+    <div class="tbar-logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer;">Earn<span>BD</span></div>
     <div class="tbar-right">
       <div class="tbar-bal">৳<span id="hBal">0</span></div>
       <div class="tbar-avatar" id="avt" onclick="window.location.href='profile.html'">U</div>
@@ -21,58 +143,54 @@
   </div>
 
   <div class="page">
-    <div class="ph">
-      <div class="ph-title">রেফার করুন</div>
-      <div class="ph-sub">বন্ধুদের আমন্ত্রণ জানান — কমিশন পান</div>
+    <div class="ref-card-premium">
+      <div class="ref-gift-ico">🎁</div>
+      <div class="ref-title">বন্ধুকে রেফার করুন এবং আয় করুন</div>
+      <div class="ref-desc">
+        আপনার রেফার লিংকটি শেয়ার করুন এবং আপনার বন্ধুদের আমন্ত্রণ করুন। আপনার বন্ধু সাইন আপ করলে আপনি <b>100.00 TAKA</b> বোনাস পাবেন।
+      </div>
+
+      <div class="ref-badge">
+        😊 প্রতি রেফারে 100.00 TAKA বোনাস
+      </div>
+
+      <div class="ref-link-box">
+        <input id="refLink" type="text" readonly value="লোড হচ্ছে...">
+        <div class="ref-copy-btn-inner" onclick="copyRef()">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </div>
+      </div>
+
+      <div class="ref-btns">
+        <button class="ref-action-btn btn-copy-main" onclick="copyRef()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+            লিঙ্ক কপি করুন
+        </button>
+        <button class="ref-action-btn btn-share-main" onclick="shareRef()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
+            শেয়ার করুন
+        </button>
+      </div>
     </div>
 
-    <div class="ref-hero">
-      <div class="ref-hero-grid"></div><div class="ref-hero-orb"></div>
-      <div style="font-size:13px;color:rgba(255,255,255,.5);position:relative;">আপনার রেফার কোড</div>
-      <div class="ref-code-box">
-        <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;">নিচের কোডটি শেয়ার করুন</div>
-        <div class="ref-code" id="myCode">———</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;word-break:break-all;font-family:monospace;" id="myLink">লোড হচ্ছে...</div>
-      </div>
-      <div class="ref-action-row">
-        <button class="ref-btn ref-btn-copy" onclick="copyRef()">📋 কোড কপি</button>
-        <button class="ref-btn ref-btn-share" onclick="shareRef()">📤 লিংক শেয়ার</button>
-      </div>
+    <div class="ref-list-h">
+        <h3>রেফার করা বন্ধুদের তালিকা</h3>
+        <div class="total-badge">মোট: <span id="rTotal">0</span></div>
     </div>
 
-    <div style="background:var(--g3);border:1.5px solid #a7f3d0;color:#065f46;border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;line-height:1.7;">
-      <span>💰</span>
-      <span>কেউ আপনার কোড দিয়ে রেজিস্টার করলে আপনার রেফার লিস্টে যুক্ত হবে। যখন সে প্ল্যান কিনবে — আপনি <strong>১০% কমিশন</strong> পাবেন!</span>
-    </div>
-
-    <div class="sg">
-      <div class="sc"><div class="sc-ico" style="background:var(--b50);">👥</div><div class="sc-num" id="rTotal">0</div><div class="sc-lbl">মোট রেফার</div></div>
-      <div class="sc"><div class="sc-ico" style="background:var(--g3);">💵</div><div class="sc-num" style="font-size:16px;" id="rEarn">৳0</div><div class="sc-lbl">রেফার আয়</div></div>
-    </div>
-
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <div class="card-title">👥 রেফার তালিকা</div>
-        <button onclick="syncReferrals()" class="badge badge-blue" style="border:none;cursor:pointer;">🔄 সিঙ্ক</button>
-      </div>
-      
-
-      <div id="refTable" class="empty">
-        <div class="empty-ico">👥</div>
-        <div class="empty-txt">এখনো কোনো রেফার নেই</div>
-      </div>
+    <div id="refTable">
+        <div class="card" style="padding:40px; text-align:center;">
+            <div style="font-size:40px; margin-bottom:15px; opacity:0.3;">👥</div>
+            <div style="color:#94a3b8; font-size:13px;">এখনো কোনো রেফার নেই</div>
+        </div>
     </div>
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bnav">
     <div onclick="window.location.href='dashboard.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
       হোম
-    </div>
-    <div onclick="window.location.href='plans.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-      প্ল্যান
     </div>
     <div onclick="window.location.href='task.html'" class="bnav-item">
       <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
@@ -96,155 +214,64 @@
 
   <script src="script.js"></script>
   <script>
-    function copyRef(){
-      const code = document.getElementById('myCode').textContent;
-      navigator.clipboard.writeText(code).then(() => toast('📋 কোড কপি হয়েছে!'));
-    }
-    function shareRef(){
-      const link = document.getElementById('myLink').textContent;
-      navigator.share({ title: 'EarnBD', text: 'EarnBD-তে যোগ দিন এবং প্রতিদিন আয় করুন!', url: link }).catch(() => {
-        navigator.clipboard.writeText(link).then(() => toast('📋 লিংক কপি হয়েছে!'));
-      });
-    }
-
-    async function loadReferData() {
-      if(!S.user || !auth.currentUser) return;
-      const code = S.user.ref_code || 'EB-NONE';
-      document.getElementById('myCode').textContent = code;
-      
-      let baseUrl = window.location.origin;
-      if (baseUrl === 'null' || baseUrl.startsWith('file')) baseUrl = 'https://earnbd.com'; 
-      document.getElementById('myLink').textContent = `${baseUrl}/signup.html?ref=${code}`;
-      
-      document.getElementById('rTotal').textContent = S.user.refCount || 0;
-      document.getElementById('rEarn').textContent = `৳${S.user.refEarn || 0}`;
-      loadReferralList();
-    }
-
-    async function syncReferrals(silent = false) {
-       if (!S.user || !auth.currentUser) return;
-       if (!silent) toast('🔍 ডেটা সিঙ্ক হচ্ছে...');
-       try {
-          const myUid = auth.currentUser.uid;
-          const myCode = (S.user.ref_code || 'EB-NONE').trim();
-          const myPhone = S.user.phone.trim();
-          const pNoZero = myPhone.replace(/^0/, '');
-          
-          const queries = [
-            db.collection('users').where('referred_by', '==', myCode).get(),
-            db.collection('users').where('referred_by', '==', myCode.toLowerCase()).get(),
-            db.collection('users').where('referred_by', '==', myCode.toUpperCase()).get(),
-            db.collection('users').where('referred_by', '==', pNoZero).get(),
-            db.collection('users').where('referred_by', '==', '0' + pNoZero).get()
-          ];
-
-          const results = await Promise.all(queries);
-          let foundDocs = [];
-          results.forEach(s => s.forEach(d => foundDocs.push(d)));
-          
-          // Unique by UID
-          const uniqueDocs = foundDocs.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i && v.id !== myUid);
-
-          let addedCount = 0;
-          let commissionRecovered = 0;
-          const myRefCol = db.collection('users').doc(myUid).collection('referrals');
-
-          for (const doc of uniqueDocs) {
-              const u = doc.data();
-              const check = await myRefCol.doc(doc.id).get();
-              if (!check.exists) {
-                await myRefCol.doc(doc.id).set({ uid: doc.id, name: u.name, phone: u.phone, created_at: u.created_at || firebase.firestore.FieldValue.serverTimestamp() });
-                addedCount++;
-              }
-
-              // Recovery Logic (Simplified/Fixed)
-              // Only check if they have orders
-              const orders = await db.collection('orders').where('uid', '==', doc.id).get();
-              for (const oDoc of orders.docs) {
-                const order = oDoc.data();
-                const bonus = Math.floor(order.amt * 0.1);
-                if (bonus <= 0) continue;
-
-                const histCheck = await db.collection('history').where('uid', '==', myUid).where('type_sub', '==', 'refer').get();
-                const alreadyPaid = histCheck.docs.some(h => h.data().msg.includes(u.name) && Math.abs(h.data().amt - bonus) < 2);
-                
-                if (!alreadyPaid) {
-                  await db.collection('users').doc(myUid).update({
-                    bal: firebase.firestore.FieldValue.increment(bonus),
-                    refEarn: firebase.firestore.FieldValue.increment(bonus)
-                  });
-                  await db.collection('history').add({
-                    uid: myUid, type: 'history', type_sub: 'refer', amt: bonus,
-                    msg: `রিকভারি কমিশন (${u.name})`,
-                    date: new Date().toLocaleString('bn-BD'),
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                  });
-                  commissionRecovered += bonus;
-                }
-              }
-          }
-
-          if (addedCount > 0 || commissionRecovered > 0) {
-            if (addedCount > 0) await db.collection('users').doc(myUid).update({ refCount: firebase.firestore.FieldValue.increment(addedCount) });
-            toast(`✅ অটো-সিঙ্ক: ${addedCount}টি রেফার এবং ৳${commissionRecovered} কমিশন যোগ হয়েছে!`);
-            loadReferData();
-          } else if (!silent) {
-            toast('ℹ️ নতুন কোনো ডাটা পাওয়া যায়নি');
-          }
-          loadReferralList();
-       } catch (e) { console.error(e); if(!silent) toast('❌ সিঙ্ক ব্যর্থ হয়েছে'); }
-    }
-
-
-    async function loadReferralList() {
-       const cont = document.getElementById('refTable');
-       if (!cont || !auth.currentUser) return;
-       try {
-         const snap = await db.collection('users').doc(auth.currentUser.uid).collection('referrals').get();
-         if (snap.empty) {
-           cont.innerHTML = `<div class="empty-ico">👥</div><div class="empty-txt">এখনো কোনো রেফার নেই</div>`;
-           cont.classList.add('empty');
-           return;
-         }
-         cont.classList.remove('empty');
-         cont.innerHTML = snap.docs.map(doc => {
-           const d = doc.data();
-           const ts = d.created_at ? (d.created_at.seconds ? new Date(d.created_at.seconds * 1000) : d.created_at.toDate()) : new Date();
-           return `
-             <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
-               <div style="display:flex; align-items:center; gap:12px;">
-                 <div style="width:36px; height:36px; background:var(--b50); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--b700);">${(d.name||'U')[0]}</div>
-                 <div>
-                   <div style="font-weight:700; font-size:14px; color:var(--text);">${d.name}</div>
-                   <div style="font-size:11px; color:var(--t3);">${d.phone}</div>
-                 </div>
-               </div>
-               <div style="font-size:11px; font-weight:600; color:var(--t3);">${ts.toLocaleDateString('bn-BD')}</div>
-             </div>
-           `;
-         }).join('');
-         document.getElementById('rTotal').textContent = snap.size;
-       } catch (e) { }
-    }
-
     checkAuth();
     
-    // Guest handling
-    setTimeout(() => {
-      if(!S.user && !window.isTelegram) {
-        document.querySelector('.ref-hero').innerHTML = `
-          <div style="padding:40px 20px; text-align:center;">
-             <div style="font-size:40px; margin-bottom:15px;">🔒</div>
-             <div style="font-family:'Baloo Da 2',cursive; font-size:18px; font-weight:800; color:var(--text); margin-bottom:10px;">লগইন প্রয়োজন</div>
-             <div style="font-size:13px; color:var(--t3); margin-bottom:20px;">আপনার পার্সোনাল রেফার কোড দেখতে লগইন করুন।</div>
-             <button onclick="location.href='login.html'" class="btn btn-primary" style="padding:10px 30px; height:auto; width:auto;">লগইন করুন</button>
-          </div>
-        `;
-      }
-    }, 1000);
-    // Auto sync every 30 seconds
-    setInterval(() => { if(S.user) syncReferrals(true); }, 30000);
-    const intv = setInterval(() => { if(S.user) { loadReferData(); clearInterval(intv); } }, 500);
+    function updateRefUI() {
+        if (!S.user) return;
+        const botUser = S.user.tg_id || S.user.uid;
+        const link = `https://t.me/EarnBD_Bot?start=${botUser}`;
+        document.getElementById('refLink').value = link;
+        document.getElementById('rTotal').textContent = S.user.refCount || 0;
+        loadReferrals();
+    }
+
+    async function loadReferrals() {
+        const uid = auth.currentUser.uid;
+        const q = await db.collection('users').where('refBy', '==', uid).limit(20).get();
+        const table = document.getElementById('refTable');
+        if (q.empty) return;
+
+        table.innerHTML = '';
+        q.forEach(doc => {
+            const d = doc.data();
+            const row = document.createElement('div');
+            row.className = 'card';
+            row.style.padding = '12px 15px';
+            row.style.marginBottom = '8px';
+            row.style.display = 'flex';
+            row.style.alignItems = 'center';
+            row.style.gap = '12px';
+            row.innerHTML = `
+                <div style="width:34px; height:34px; border-radius:50%; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-weight:800; color:#6366f1; font-size:12px;">${(d.name || 'U')[0].toUpperCase()}</div>
+                <div>
+                    <div style="font-weight:700; font-size:13px; color:#1e293b;">${d.name || 'User'}</div>
+                    <div style="font-size:10px; color:#94a3b8;">Joined: ${d.joinedAt || 'N/A'}</div>
+                </div>
+            `;
+            table.appendChild(row);
+        });
+    }
+
+    function copyRef() {
+        const link = document.getElementById('refLink').value;
+        navigator.clipboard.writeText(link).then(() => toast('📋 লিঙ্ক কপি হয়েছে!'));
+    }
+
+    function shareRef() {
+        const link = document.getElementById('refLink').value;
+        const text = `EarnBD-তে জয়েন করুন এবং ইনকাম শুরু করুন! আমার রেফার লিঙ্ক: ${link}`;
+        if (navigator.share) {
+            navigator.share({ title: 'EarnBD Refer', text, url: link });
+        } else {
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+        }
+    }
+
+    const oldUI = updateUI;
+    updateUI = function() {
+        oldUI();
+        updateRefUI();
+    }
   </script>
 </body>
 </html>

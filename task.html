@@ -3,94 +3,175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>EarnBD - ডেইলি টাস্ক</title>
+  <title>EarnBD - প্রিমিয়াম টাস্ক</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://quge5.com/88/tag.min.js" data-zone="237738" async data-cfasync="false"></script>
   <style>
-    .task-hero {
-      background: linear-gradient(135deg, var(--b700), var(--b900));
-      padding: 30px 20px;
-      border-radius: 24px;
-      color: white;
+    :root {
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.4);
+    }
+    
+    .task-container {
+      margin-top: 15px;
+      padding: 0 16px;
+    }
+
+    .premium-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+      border: 1px solid var(--glass-border);
+      border-radius: 32px;
+      padding: 20px 20px;
       text-align: center;
-      margin-bottom: 25px;
       position: relative;
+      box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
       overflow: hidden;
     }
-    .task-hero::before {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: rotate 10s linear infinite;
-    }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    .timer-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 18px;
-      padding: 15px;
-      margin-top: 15px;
+    .premium-card::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      pointer-events: none;
     }
-    .timer-val {
-      font-family: 'Baloo Da 2', cursive;
-      font-size: 32px;
-      font-weight: 800;
-      color: #fff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    .task-list-h {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 15px;
+
+      width: 70px;
+      height: 70px;
+      background: #f5f3ff;
+      border-radius: 50%;
       display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .icon-container svg {
+      width: 50px;
+      height: 50px;
+      color: #8b5cf6;
+    }
+
+    .task-main-title {
+      font-family: 'Baloo Da 2', cursive;
+      font-size: 28px;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .task-desc {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .reward-badge {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border: 1px solid #bae6fd;
+      padding: 8px 20px;
+      border-radius: 14px;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
+      font-weight: 800;
+      color: #0369a1;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(3, 105, 161, 0.08);
     }
-    .task-item {
-      background: white;
+
+    .progress-section {
+      background: #f8fafc;
       border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 12px;
-      border: 1px solid var(--border);
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #f1f5f9;
+    }
+
+    .progress-label {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      transition: transform 0.2s;
+      font-size: 14px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 12px;
     }
-    .task-item:active { transform: scale(0.98); }
-    .task-ico {
-      width: 44px; height: 44px;
-      background: var(--b50);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
+
+    .progress-track {
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
     }
-    .collect-btn {
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #818cf8 0%, #c084fc 100%);
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.4);
+    }
+
+    .premium-btn {
       width: 100%;
-      padding: 18px;
-      border-radius: 20px;
-      background: var(--b700);
-      color: white;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #fff;
       border: none;
-      font-size: 16px;
+      border-radius: 20px;
+      padding: 18px;
+      font-size: 18px;
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 10px 20px rgba(26, 80, 219, 0.3);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.35);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: all 0.3s;
     }
-    .collect-btn:disabled {
+
+    .premium-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(239, 68, 68, 0.45);
+    }
+
+    .premium-btn:active { transform: scale(0.96); }
+
+    .premium-btn:disabled {
       background: #cbd5e1;
       box-shadow: none;
-      cursor: not-allowed;
+      transform: none;
+      color: #94a3b8;
+    }
+
+    .info-footer {
+      text-align: center;
+      margin-top: 25px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 15px;
+      border-radius: 16px;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.6;
+      border: 1px solid rgba(255, 255, 255, 0.5);
     }
   </style>
 </head>
@@ -98,7 +179,7 @@
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tbar-logo">Earn<span>BD</span></div>
+    <div class="tbar-logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer;">Earn<span>BD</span></div>
     <div class="tbar-right">
       <div class="tbar-bal">৳<span id="hBal">0</span></div>
       <div class="tbar-avatar" id="avt" onclick="window.location.href='profile.html'">U</div>
@@ -106,29 +187,61 @@
   </div>
 
   <div class="page">
-    <div class="task-hero">
-      <div style="font-size: 14px; opacity: 0.8; margin-bottom: 5px;">আজকের টাস্ক</div>
-      <h2 style="font-family: 'Baloo Da 2'; font-weight: 800;">ইনকাম সংগ্রহ করুন</h2>
-      
-      <div class="timer-card">
-        <div id="timerStatus" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.9;">কালেকশন সময় বাকি</div>
-        <div class="timer-val" id="mainTimer">00:00:00</div>
-      </div>
-    </div>
+    <div class="task-container">
+      <div class="premium-card">
+        <div class="icon-container">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+        </div>
 
-    <div class="task-list-h">📝 আপনার একটিভ প্ল্যান সমূহ</div>
-    <div id="taskList">
-      <div class="card" style="text-align:center; padding:30px;">
-        <div style="color:var(--t3);">লোডিং হচ্ছে...</div>
-      </div>
-    </div>
+        <div class="task-main-title">বিজ্ঞাপন দেখুন</div>
+        <div class="task-desc">প্রতিটি হাই-সিপিসি বিজ্ঞাপন দেখে সহজেই আপনার ইনকাম বাড়িয়ে নিন।</div>
 
-    <div style="margin-top: 25px; margin-bottom: 30px;">
-      <button id="collectBtn" class="collect-btn" onclick="runCollect()">
-        💰 ইনকাম সংগ্রহ করুন
-      </button>
-      <div style="text-align:center; font-size:11px; color:var(--t3); margin-top:12px; line-height:1.5;">
-        প্রতি ২৪ ঘণ্টায় একবার আপনার সকল প্ল্যান থেকে ইনকাম সংগ্রহ করতে পারবেন।
+        <div class="reward-pill">
+        <span>💎</span> রিওয়ার্ড: <span style="font-family: 'Baloo Da 2', cursive; color: #2563eb; font-weight: 800;">৳২০.০০ টাকা</span>
+      </div>
+
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>আজকের সম্পন্ন টাস্ক</span>
+            <span><span id="doneCnt" style="color:#8b5cf6;">0</span> / 20</span>
+          </div>
+          <div class="progress-track">
+            <div id="progFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <button id="adBtn" class="premium-btn" onclick="startAdTask()">
+          <span>🚀</span> বিজ্ঞাপন দেখুন
+        </button>
+      </div>
+
+    <!-- SOCIAL TASKS -->
+    <div id="socialTasks" style="margin-top: 20px; display: grid; gap: 12px;">
+        <div id="fbTask" class="premium-card" style="padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: #eff6ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👥</div>
+                <div>
+                    <div style="font-weight: 800; color: #1e293b; font-size: 14px;">ফেসবুক গ্রুপে জয়েন</div>
+                    <div style="font-size: 11px; color: #64748b;">বোনাস: <span style="font-family: 'Baloo Da 2', cursive; color: #2563eb; font-weight: 800; font-size: 13px;">৳১০০.০০ টাকা</span></div>
+                </div>
+            </div>
+            <button class="premium-btn" style="width: auto; padding: 8px 15px; font-size: 12px; border-radius: 10px; background: #1877f2;" onclick="doSocialTask('fb')">জয়েন করুন</button>
+        </div>
+
+        <div id="tgTask" class="premium-card" style="padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; text-align: left;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: #f0f9ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;">📢</div>
+                <div>
+                    <div style="font-weight: 800; color: #1e293b; font-size: 14px;">টেলিগ্রাম চ্যানেলে জয়েন</div>
+                    <div style="font-size: 11px; color: #64748b;">বোনাস: <span style="font-family: 'Baloo Da 2', cursive; color: #2563eb; font-weight: 800; font-size: 13px;">৳১০০.০০ টাকা</span></div>
+                </div>
+            </div>
+            <button class="premium-btn" style="width: auto; padding: 8px 15px; font-size: 12px; border-radius: 10px; background: #229ed9;" onclick="doSocialTask('tg')">জয়েন করুন</button>
+        </div>
+    </div>
+    
+    <div class="info-footer">
+          💡 <b>টিপস:</b> বিজ্ঞাপনটি সম্পূর্ণ দেখলে বোনাস নিশ্চিত হবে। বিজ্ঞাপন চলাকালীন অ্যাপ থেকে বের হবেন না।
       </div>
     </div>
   </div>
@@ -136,12 +249,8 @@
   <!-- BOTTOM NAV -->
   <div class="bnav">
     <div onclick="window.location.href='dashboard.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
       হোম
-    </div>
-    <div onclick="window.location.href='plans.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-      প্ল্যান
     </div>
     <div onclick="window.location.href='task.html'" class="bnav-item on">
       <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
@@ -163,93 +272,165 @@
 
   <div id="toast"></div>
 
+  <!-- Ad Overlay -->
+  <div id="adOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.98); backdrop-filter:blur(10px); z-index:10000; flex-direction:column; align-items:center; justify-content:center; color:#fff; padding:20px; text-align:center;">
+    <!-- Top Header with Timer and X -->
+    <div style="width:100%; max-width:320px; display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <div style="width:36px;"></div> <!-- Spacer -->
+        <div style="background:rgba(255,255,255,0.1); padding:5px 20px; border-radius:12px; border:1px solid rgba(255,255,255,0.2);">
+            <div style="font-size:20px; font-weight:900; color:#fff; font-family:monospace;" id="adTimer">00:15</div>
+        </div>
+        <div id="adCloseX" style="display:none; width:36px; height:36px; background:rgba(255,255,255,0.1); border-radius:50%; align-items:center; justify-content:center; font-size:18px; font-weight:800; cursor:pointer;" onclick="finishAdTask()">✕</div>
+    </div>
+
+    <!-- Ad Content Area -->
+    <div style="width:100%; max-width:320px; aspect-ratio:4/5; background:rgba(255,255,255,0.05); border-radius:24px; border:1px solid rgba(255,255,255,0.1); display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:30px; position:relative; overflow:hidden;">
+        <div style="font-size:80px; margin-bottom:10px; animation: pulse 2s infinite;">🎬</div>
+        <div style="font-size:16px; font-weight:700; color:#94a3b8;">ads by Monetag</div>
+        <!-- This is where Monetag might inject something, or it stays as a placeholder -->
+    </div>
+
+    <div style="font-size:14px; color:#cbd5e1; margin-bottom:30px; max-width:280px;">অপেক্ষা করুন, বিজ্ঞাপনটি শেষ না হওয়া পর্যন্ত এটি বন্ধ করবেন না।</div>
+
+    <button id="continueBtn" style="display:none; width:100%; max-width:320px; background:#2563eb; color:#fff; border:none; border-radius:16px; padding:18px; font-size:20px; font-weight:800; cursor:pointer; box-shadow:0 10px 20px rgba(37, 99, 235, 0.3);" onclick="window.open('https://up-to-down3gb.com/direct/link/your_id', '_blank')">
+      Continue
+    </button>
+  </div>
+
   <script src="script.js"></script>
   <script>
     checkAuth();
+    let isWorking = false;
 
     function updateTaskUI() {
-      const cont = document.getElementById('taskList');
       if (!S.user) return;
-
-      const plans = S.user.active_plans || [];
-      if (plans.length === 0 && !S.user.plan) {
-        cont.innerHTML = `
-          <div class="card" style="text-align:center; padding:40px 20px;">
-            <div style="font-size:40px; margin-bottom:10px;">📦</div>
-            <div style="font-weight:700; color:var(--text);">কোনো একটিভ প্ল্যান নেই</div>
-            <a href="plans.html" class="btn btn-primary" style="margin-top:15px; padding:10px 20px;">প্ল্যান কিনুন</a>
-          </div>
-        `;
-        document.getElementById('collectBtn').disabled = true;
-        return;
+      const done = S.user.ad_tasks_today || 0;
+      const total = 20;
+      
+      document.getElementById('doneCnt').textContent = done;
+      const fill = (done / total) * 100;
+      document.getElementById('progFill').style.width = fill + '%';
+      
+      if (done >= total) {
+        document.getElementById('adBtn').disabled = true;
+        document.getElementById('adBtn').innerHTML = '<span>✅</span> আজকের টাস্ক শেষ';
       }
 
-      cont.innerHTML = plans.map(p => `
-        <div class="task-item">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="task-ico">📦</div>
-            <div>
-              <div style="font-weight:800; color:var(--text); font-size:15px;">${p.name}</div>
-              <div style="font-size:11px; color:var(--t3);">বাকি: ${p.rem || p.days} দিন</div>
-            </div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:10px; color:var(--t3);">আজকের আয়</div>
-            <div style="font-weight:800; color:var(--green); font-size:16px;">৳${p.daily}</div>
-          </div>
-        </div>
-      `).join('');
-
-      // Update Button Status
-      const can = canCollect();
-      const btn = document.getElementById('collectBtn');
-      if (can) {
-        btn.disabled = false;
-        btn.innerHTML = '💰 ইনকাম সংগ্রহ করুন';
-        document.getElementById('timerStatus').textContent = 'কালেকশন এখন চালু';
-        document.getElementById('mainTimer').textContent = 'READY';
-        document.getElementById('mainTimer').style.color = '#4ade80';
-      } else {
-        btn.disabled = true;
-        btn.innerHTML = '✅ আজকের টাস্ক শেষ';
-        document.getElementById('timerStatus').textContent = 'পরবর্তী কালেকশন বাকি';
-        document.getElementById('mainTimer').style.color = '#fff';
-        startTimer();
+      // Social tasks check
+      if (S.user.social_fb_done) {
+          document.getElementById('fbTask').style.opacity = '0.6';
+          document.getElementById('fbTask').querySelector('button').textContent = 'সম্পন্ন ✅';
+          document.getElementById('fbTask').querySelector('button').disabled = true;
+      }
+      if (S.user.social_tg_done) {
+          document.getElementById('tgTask').style.opacity = '0.6';
+          document.getElementById('tgTask').querySelector('button').textContent = 'সম্পন্ন ✅';
+          document.getElementById('tgTask').querySelector('button').disabled = true;
       }
     }
 
-    let tIntv;
-    function startTimer() {
-      if(tIntv) clearInterval(tIntv);
-      tIntv = setInterval(() => {
-        if (!S.user || !S.user.last_collect) return;
+    async function doSocialTask(type) {
+        if (!auth.currentUser) return;
+        const url = type === 'fb' ? 'https://facebook.com/groups/yourgroup' : 'https://t.me/yourchannel';
+        window.open(url, '_blank');
+
+        // Award bonus
+        const uid = auth.currentUser.uid;
+        const reward = 100;
+        const field = type === 'fb' ? 'social_fb_done' : 'social_tg_done';
         
-        let last;
-        if (S.user.last_collect.seconds) last = new Date(S.user.last_collect.seconds * 1000);
-        else if (S.user.last_collect.toDate) last = S.user.last_collect.toDate();
-        else last = new Date(S.user.last_collect);
+        if (S.user[field]) return;
 
-        const next = new Date(last.getTime() + 24 * 60 * 60 * 1000);
-        const diff = next - new Date();
+        try {
+            const batch = db.batch();
+            const userRef = db.collection('users').doc(uid);
+            batch.update(userRef, {
+                bal: firebase.firestore.FieldValue.increment(reward),
+                [field]: true
+            });
+            const histRef = db.collection('history').doc();
+            batch.set(histRef, {
+                uid, amt: reward, msg: (type === 'fb' ? "ফেসবুক গ্রুপ" : "টেলিগ্রাম চ্যানেল") + " জয়েন বোনাস",
+                type_sub: "social_bonus",
+                date: new Date().toLocaleString('bn-BD'),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            await batch.commit();
+            toast(`🎉 আপনি ৳${reward} বোনাস পেয়েছেন!`);
+            updateTaskUI();
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
-        if (diff <= 0) {
-          clearInterval(tIntv);
-          updateTaskUI();
-        } else {
-          const h = Math.floor(diff / 3600000);
-          const m = Math.floor((diff % 3600000) / 60000);
-          const s = Math.floor((diff % 60000) / 1000);
-          document.getElementById('mainTimer').textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    async function startAdTask() {
+      if (isWorking) return;
+      if (!auth.currentUser) return;
+      
+      const done = S.user.ad_tasks_today || 0;
+      if (done >= 20) {
+        toast("⏳ আজকের লিমিট শেষ!");
+        return;
+      }
+
+      isWorking = true;
+      const overlay = document.getElementById('adOverlay');
+      const timerEl = document.getElementById('adTimer');
+      const contBtn = document.getElementById('continueBtn');
+      
+      overlay.style.display = 'flex';
+      contBtn.style.display = 'none';
+      document.getElementById('adCloseX').style.display = 'none';
+      
+      let timeLeft = 15;
+      const timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `00:${String(timeLeft).padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          contBtn.style.display = 'block';
+          document.getElementById('adCloseX').style.display = 'flex';
+          timerEl.textContent = "00:00";
         }
       }, 1000);
     }
 
-    async function runCollect() {
-      const btn = document.getElementById('collectBtn');
-      btn.disabled = true;
-      btn.innerHTML = '⏳ প্রসেসিং...';
-      await collectDaily();
-      updateTaskUI();
+    async function finishAdTask() {
+      const overlay = document.getElementById('adOverlay');
+      overlay.style.display = 'none';
+      isWorking = false;
+      await completeAdTask();
+    }
+
+    async function completeAdTask() {
+      const uid = auth.currentUser.uid;
+      const reward = 20;
+      
+      try {
+        const batch = db.batch();
+        const userRef = db.collection('users').doc(uid);
+        
+        batch.update(userRef, {
+          bal: firebase.firestore.FieldValue.increment(reward),
+          todayEarn: firebase.firestore.FieldValue.increment(reward),
+          ad_tasks_today: firebase.firestore.FieldValue.increment(1),
+          total_tasks: firebase.firestore.FieldValue.increment(1)
+        });
+
+        const histRef = db.collection('history').doc();
+        batch.set(histRef, {
+          uid, amt: reward, msg: "বিজ্ঞাপন টাস্ক রিওয়ার্ড", type_sub: "ad_task",
+          date: new Date().toLocaleString('bn-BD'), timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        await batch.commit();
+        toast(`🎉 আপনি ৳${reward} বোনাস পেয়েছেন!`);
+        updateTaskUI();
+      } catch (e) {
+        console.error(e);
+        toast("❌ ভুল হয়েছে!");
+      }
     }
 
     const oldUI = updateUI;

@@ -1,19 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>EarnBD - Withdraw</title>
+  <title>EarnBD - উত্তোলন করুন</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://quge5.com/88/tag.min.js" data-zone="237738" async data-cfasync="false"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    .rule-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .rule-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .rule-txt {
+      font-size: 13px;
+      color: #1e3a8a;
+      line-height: 1.5;
+    }
+    .rule-txt b {
+        color: #1d4ed8;
+    }
+    .wd-inp-group {
+      margin-bottom: 18px;
+    }
+    .wd-inp-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+    .wd-inp {
+      width: 100%;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .wd-inp:focus {
+      border-color: #6366f1;
+    }
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 12px;
+      margin-top: 25px;
+    }
+    .btn-cancel {
+      background: #f1f5f9;
+      color: #475569;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-request {
+      background: linear-gradient(135deg, #818cf8, #a855f7);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(129, 140, 248, 0.3);
+    }
+    .btn-request:disabled {
+        background: #cbd5e1;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="tbar-logo">Earn<span>BD</span></div>
+    <div class="tbar-logo" onclick="window.location.href='dashboard.html'" style="cursor:pointer;">Earn<span>BD</span></div>
     <div class="tbar-right">
       <div class="tbar-bal">৳<span id="hBal">0</span></div>
       <div class="tbar-avatar" id="avt" onclick="window.location.href='profile.html'">U</div>
@@ -21,63 +102,60 @@
   </div>
 
   <div class="page">
-    <div class="ph">
-      <div class="ph-title">Withdraw Balance</div>
-      <div class="ph-sub">Cash out your earnings securely</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding:0 5px;">
+        <h2 style="font-family:'Baloo Da 2'; font-weight:800; color:#1e293b;">উত্তোলন করুন</h2>
+        <div style="font-size:20px; color:#64748b; cursor:pointer;" onclick="window.location.href='dashboard.html'">✕</div>
     </div>
 
-    <!-- BALANCE HERO -->
-    <div class="hero">
-      <div class="hero-grid"></div><div class="hero-orb"></div>
-      <div class="hero-lbl">Available Balance</div>
-      <div class="hero-amt"><sup>৳</sup><span id="hBalLarge">0</span></div>
-      <div id="minWdLbl" style="font-size:12px;color:rgba(255,255,255,.6);margin-top:8px;">Min Withdraw: ৳500</div>
+    <!-- RULE BOX -->
+    <div class="rule-box">
+      <div class="rule-title">⚠️ উত্তোলনের শর্তাবলী</div>
+      <div class="rule-txt">
+        ১. আপনাকে অন্তত ১০টি বিজ্ঞাপন দেখতে হবে। বর্তমানে: <b id="rSeen">0/10</b>।<br>
+        ২. আপনাকে অন্তত ২ জন বন্ধুকে রেফার করতে হবে। বর্তমানে: <b id="rRef">0/2</b>।
+      </div>
     </div>
 
-    <!-- FORM CARD -->
-    <div class="card" style="padding:22px;">
-      <div class="field">
-        <label>Payment Method</label>
-        <select id="wdMethod" class="inp" style="appearance:none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231a50db%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 14px center; background-size: 12px; padding-right: 30px;">
-          <option>bKash</option>
-          <option>Nagad</option>
-          <option>Rocket</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Account Number / ID</label>
-        <input id="wdPhone" class="inp" type="tel" placeholder="e.g. 01XXXXXXXXX">
-      </div>
-      <div class="field">
-        <label>Amount (৳)</label>
-        <input id="wdAmt" class="inp" type="number" placeholder="Enter amount">
-      </div>
-      <button class="btn btn-primary" style="margin-top:10px; width:100%; border-radius:14px; height:52px;" onclick="submitWithdraw()">
-        🚀 Confirm Withdraw →
-      </button>
+    <!-- FORM -->
+    <div class="wd-inp-group">
+      <label>পেমেন্ট মেথড</label>
+      <select id="wdMethod" class="wd-inp" style="appearance:none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 14px center; background-size: 12px;">
+        <option>বিকাশ [ BKASH ]</option>
+        <option>নগদ [ NAGAD ]</option>
+        <option>রকেট [ ROCKET ]</option>
+        <option>Binance [ USDT ]</option>
+      </select>
     </div>
 
-    <!-- HISTORY SECTION -->
-    <div class="sec-h" style="margin-top:24px;">
-      <div class="sec-title">🕒 Withdrawal History</div>
+    <div class="wd-inp-group">
+      <label>উত্তোলন নাম্বার/Binance ID</label>
+      <input id="wdPhone" class="wd-inp" type="text" placeholder="আপনার ফোন নম্বর বা অ্যাড্রেস লিখুন">
     </div>
-    <div class="card" style="margin-bottom:30px; min-height:100px;">
-      <div id="wdHist" class="empty">
-        <div class="empty-ico">💸</div>
-        <div class="empty-txt">No withdrawals found</div>
-      </div>
+
+    <div class="wd-inp-group">
+      <label>পরিমাণ (৳)</label>
+      <input id="wdAmt" class="wd-inp" type="number" placeholder="ন্যূনতম ৳১০০০">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="window.location.href='dashboard.html'">বাতিল</button>
+      <button id="reqBtn" class="btn-request" onclick="submitWithdraw()">অনুরোধ পাঠান</button>
+    </div>
+
+    <!-- HISTORY -->
+    <div style="margin-top:40px;">
+        <h3 style="font-size:15px; font-weight:800; color:#475569; margin-bottom:15px;">উত্তোলন হিস্ট্রি</h3>
+        <div id="wdHist">
+            <div style="text-align:center; padding:30px; color:#94a3b8; font-size:13px;">কোনো হিস্ট্রি পাওয়া যায়নি</div>
+        </div>
     </div>
   </div>
 
   <!-- BOTTOM NAV -->
   <div class="bnav">
     <div onclick="window.location.href='dashboard.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
       হোম
-    </div>
-    <div onclick="window.location.href='plans.html'" class="bnav-item">
-      <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-      প্ল্যান
     </div>
     <div onclick="window.location.href='task.html'" class="bnav-item">
       <div class="bnav-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
@@ -102,159 +180,107 @@
   <script src="script.js"></script>
   <script>
     checkAuth();
-
-    // Guest handling
-    setTimeout(() => {
-      if(!S.user && !window.isTelegram) {
-        const form = document.querySelector('.card');
-        if (form) {
-          form.innerHTML = `
-            <div style="padding:20px; text-align:center;">
-               <div style="font-size:40px; margin-bottom:15px;">🔒</div>
-               <div style="font-family:'Baloo Da 2',cursive; font-size:18px; font-weight:800; color:var(--text); margin-bottom:10px;">লগইন প্রয়োজন</div>
-               <div style="font-size:13px; color:var(--t3); margin-bottom:20px;">উত্তোলন করতে বা হিস্ট্রি দেখতে লগইন করুন।</div>
-               <button onclick="location.href='login.html'" class="btn btn-primary" style="padding:10px 30px; height:auto; width:auto;">লগইন করুন</button>
-            </div>
-          `;
-        }
-        const hero = document.querySelector('.hero');
-        if (hero) hero.style.display = 'none';
-      }
-    }, 1000);
     
-    // Sync Bal to Large Hero Amount
-    const observer = new MutationObserver(() => {
-      const bLarge = document.getElementById('hBalLarge');
-      const bSmall = document.getElementById('hBal');
-      if(bLarge && bSmall) bLarge.innerText = bSmall.innerText;
-    });
-    observer.observe(document.getElementById('hBal'), { childList: true, characterData: true, subtree: true });
-
-    let minAmt = 500;
-    let reqRefs = 0;
-    let currentStep = 1;
-
-    function updateWdRules() {
+    function updateWdUI() {
       if (!S.user) return;
-      const count = S.user.wdCount || 0;
-      const refs = S.user.refCount || 0;
+      const totalAds = S.user.total_tasks || 0;
+      const refCount = S.user.refCount || 0;
+      
+      document.getElementById('rSeen').textContent = `${totalAds}/10`;
+      document.getElementById('rRef').textContent = `${refCount}/2`;
+      
+      loadHistory();
+    }
 
-      if (count === 0) {
-        minAmt = 500;
-        reqRefs = 0;
-        currentStep = 1;
-      } else if (count === 1) {
-        minAmt = 300;
-        reqRefs = 5;
-        currentStep = 2;
-      } else {
-        minAmt = 500;
-        reqRefs = 0;
-        currentStep = 3;
-      }
-
-      // Update UI
-      const minLbl = document.getElementById('minWdLbl');
-      const amtInp = document.getElementById('wdAmt');
-      if (minLbl) minLbl.innerText = `Min Withdraw: ৳${minAmt}${reqRefs > 0 ? ` (Required Refs: ${reqRefs})` : ''}`;
-      if (amtInp) amtInp.placeholder = `Min ৳${minAmt}`;
+    async function loadHistory() {
+        const uid = auth.currentUser.uid;
+        const q = await db.collection('withdraws').where('uid','==',uid).orderBy('timestamp','desc').limit(10).get();
+        const hist = document.getElementById('wdHist');
+        if (q.empty) {
+            hist.innerHTML = '<div style="text-align:center; padding:30px; color:#94a3b8; font-size:13px;">কোনো হিস্ট্রি পাওয়া যায়নি</div>';
+            return;
+        }
+        hist.innerHTML = '';
+        q.forEach(doc => {
+            const d = doc.data();
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.padding = '15px';
+            card.style.marginBottom = '10px';
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:800; font-size:14px; color:#1e293b;">${d.method}</div>
+                        <div style="font-size:11px; color:#64748b;">${d.date}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:800; font-size:14px; color:#6366f1;">৳${d.amt}</div>
+                        <div style="font-size:11px; color:${d.status==='Pending'?'#eab308':'#22c55e'}; font-weight:700;">${d.status}</div>
+                    </div>
+                </div>
+            `;
+            hist.appendChild(card);
+        });
     }
 
     async function submitWithdraw() {
+      // Monetag Direct Link
+      window.open('https://up-to-down3gb.com/direct/link/your_id', '_blank');
+
       const method = document.getElementById('wdMethod').value;
-      const address = document.getElementById('wdPhone').value.trim();
-      const amtStr = document.getElementById('wdAmt').value;
-      const amt = parseInt(amtStr);
-      const userRefs = S.user.refCount || 0;
+      const phone = document.getElementById('wdPhone').value;
+      const amt = parseFloat(document.getElementById('wdAmt').value);
+      
+      if (!phone || !amt) return toast("❌ সব তথ্য পূরণ করুন!");
+      if (amt < 1000) return toast("❌ ন্যূনতম উত্তোলন ৳১০০০!");
+      if (amt > S.user.bal) return toast("❌ পর্যাপ্ত ব্যালেন্স নেই!");
+      
+      const totalAds = S.user.total_tasks || 0;
+      if (totalAds < 10) return toast("❌ আপনাকে অন্তত ১০টি বিজ্ঞাপন দেখতে হবে!");
 
-      if (!amt || amt < minAmt) { 
-        toast(`⚠️ In your current step, min withdraw is ৳${minAmt}`); 
-        return; 
-      }
-      if (reqRefs > 0 && userRefs < reqRefs) {
-        toast(`🔒 2nd withdraw requires at least ${reqRefs} active referrals (You have ${userRefs})`);
-        return;
-      }
-      if (!address) { toast('⚠️ Please enter account number or ID'); return; }
-      if ((S.user.bal || 0) < amt) { toast('❌ Insufficient balance'); return; }
-
-      const ok = await confirmModal('Confirm Withdraw', `Are you sure you want to withdraw ৳${amt} to ${method}?`);
-      if (!ok) return;
+      const refCount = S.user.refCount || 0;
+      if (refCount < 2) return toast("❌ আপনাকে অন্তত ২ জন বন্ধুকে রেফার করতে হবে!");
 
       try {
-        const userRef = db.collection('users').doc(auth.currentUser.uid);
-        await userRef.update({ 
-          bal: S.user.bal - amt,
-          wdCount: firebase.firestore.FieldValue.increment(1)
-        });
+        const uid = auth.currentUser.uid;
+        const batch = db.batch();
+        const userRef = db.collection('users').doc(uid);
         
-        await db.collection('withdraws').add({
-          uid: auth.currentUser.uid,
-          name: S.user.name,
-          phone: S.user.phone || 'N/A',
-          method,
-          address,
-          amt,
-          status: 'pending',
-          date: new Date().toLocaleString('en-US'),
+        batch.update(userRef, {
+          bal: firebase.firestore.FieldValue.increment(-amt),
+          wdCount: firebase.firestore.FieldValue.increment(1),
+          wdTotal: firebase.firestore.FieldValue.increment(amt)
+        });
+
+        const wdRef = db.collection('withdraws').doc();
+        batch.set(wdRef, {
+          uid, method, phone, amt, status: 'Pending',
+          date: new Date().toLocaleString('bn-BD'),
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        toast('✅ Request submitted successfully!');
-        document.getElementById('wdPhone').value = '';
+        const histRef = db.collection('history').doc();
+        batch.set(histRef, {
+          uid, amt, msg: `উত্তোলন অনুরোধ (${method})`, type_sub: "withdraw",
+          date: new Date().toLocaleString('bn-BD'),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        await batch.commit();
+        toast("✅ উত্তোলন অনুরোধ সফল হয়েছে!");
         document.getElementById('wdAmt').value = '';
-        S.user.bal -= amt;
-        S.user.wdCount = (S.user.wdCount || 0) + 1;
-        updateUI();
-      } catch(e) { toast('❌ Error: ' + e.message); }
+        document.getElementById('wdPhone').value = '';
+        loadHistory();
+      } catch (e) {
+        console.error(e);
+        toast("❌ ভুল হয়েছে!");
+      }
     }
 
-    let wdListener = null;
-    async function renderWdHist() {
-      if(!auth.currentUser) return;
-      if(wdListener) wdListener(); // Cleanup old listener
-      
-      const cont = document.getElementById('wdHist');
-      
-      wdListener = db.collection('withdraws')
-        .where('uid', '==', auth.currentUser.uid)
-        .onSnapshot((snap) => {
-          if(snap.empty) {
-            cont.innerHTML = `<div class="empty-ico">💸</div><div class="empty-txt">No withdrawals found</div>`;
-            cont.classList.add('empty');
-            return;
-          }
-
-          const docs = snap.docs.map(d => ({id: d.id, ...d.data()}));
-          docs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-          cont.classList.remove('empty');
-          cont.innerHTML = docs.map(d => {
-            const status = (d.status || 'pending').toLowerCase();
-            const sColor = status === 'pending' ? 'var(--amber)' : (status === 'success' ? 'var(--green)' : 'var(--red)');
-            const sText = status === 'pending' ? 'Pending' : (status === 'success' ? 'Success' : 'Rejected');
-            
-            return `
-              <div class="hist-row">
-                <div style="display:flex; align-items:center;">
-                  <div class="hist-ico" style="background:var(--b50);">💰</div>
-                  <div>
-                    <div style="font-weight:700; color:var(--text); font-size:15px;">৳${d.amt} (${d.method})</div>
-                    <div class="hist-meta">${d.address} • ${d.date}</div>
-                  </div>
-                </div>
-                <span class="badge" style="background:${sColor}20; color:${sColor};">${sText}</span>
-              </div>
-            `;
-          }).join('');
-        }, (err) => console.error("Withdraw history error:", err));
-    }
-
-    const oldUpdateUI = updateUI;
+    const oldUI = updateUI;
     updateUI = function() {
-      oldUpdateUI();
-      updateWdRules();
-      renderWdHist();
+      oldUI();
+      updateWdUI();
     }
   </script>
 </body>

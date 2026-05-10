@@ -260,3 +260,38 @@ td{padding:11px 14px;border-top:1px solid var(--border);color:var(--t2);}
 .empty-txt{font-size:14px;color:var(--t3);line-height:1.5;}
 
 @keyframes fadeIn{from{opacity:0;transform:translateX(-10px);}to{opacity:1;transform:translateX(0);}}
+
+/* ═══ FAKE WITHDRAW ═══ */
+.fake-withdraw-container {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 10px 0;
+  height: 44px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--sh);
+}
+.fake-withdraw-wrapper {
+  display: flex;
+  white-space: nowrap;
+  gap: 50px;
+  animation: marquee 30s linear infinite;
+  padding-left: 20px;
+}
+.fake-withdraw-item {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t2);
+  flex-shrink: 0;
+}
+.fake-withdraw-item span.fw-a {
+  color: var(--b700);
+  font-weight: 800;
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
